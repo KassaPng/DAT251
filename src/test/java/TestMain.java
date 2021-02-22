@@ -8,7 +8,7 @@ public class TestMain {
     @Test
     void testHelloWorld() {
         Main main = new Main();
-        assert(main.helloWorld().equals("Hello Worl!"));
+        assert(main.helloWorld().equals("Hello World!"));
     }
 
 
