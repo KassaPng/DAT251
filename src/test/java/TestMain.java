@@ -1,3 +1,4 @@
+import dat251.demo.Main;
 import org.junit.jupiter.api.Test;
 
 public class TestMain {
