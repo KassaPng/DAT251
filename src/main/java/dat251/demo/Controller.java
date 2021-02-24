@@ -11,9 +11,9 @@ public class Controller {
 
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
 
-    @RequestMapping("/")
+    @RequestMapping("/hello")
     public String index() {
-        return "Greetings from Spring Boot!";
+        return "Hello World!";
     }
 
 }
