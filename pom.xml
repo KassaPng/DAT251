@@ -44,6 +44,7 @@
                 <artifactId>heroku-maven-plugin</artifactId>
                 <version>3.0.3</version>
                 <configuration>
+                    <appName>dat251-groupapp</appName>
                     <processTypes>
                         <web>java -jar target/DAT251-1.0-SNAPSHOT.jar --server.port=$PORT</web>
                     </processTypes>
