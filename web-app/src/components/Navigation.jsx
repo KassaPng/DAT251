@@ -7,7 +7,7 @@ import Nav from 'react-bootstrap/Nav'
 function Navigation(props) {
   return (
     <Navbar bg="light" expand="lg">
-      <Navbar.Brand href="/login">Group Project</Navbar.Brand>
+      <Navbar.Brand href="/">Group Project</Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">

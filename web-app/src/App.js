@@ -14,7 +14,7 @@ function App() {
       <Router>
         <Navigation />
         <Switch>
-          <Route path="/login" exact component={() => <Login />} />
+          <Route path="/" exact component={() => <Login />} />
           <Route path="/profile" exact component={() => <Profile />} />
           <Route path="/group" exact component={() => <Group />} />
         </Switch>
