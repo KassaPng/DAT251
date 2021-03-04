@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import Navigation from "./components/Navigation.jsx";
 import Footer from "./components/Footer.jsx";
 import Login from "./components/Login.jsx";
+import Register from "./components/Register.jsx";
 import Profile from "./components/Profile.jsx";
 import Group from "./components/Group.jsx";
 
@@ -15,6 +16,7 @@ function App() {
         <Navigation />
         <Switch>
           <Route path="/" exact component={() => <Login />} />
+          <Route path="/register" exact component={() => <Register />} />
           <Route path="/profile" exact component={() => <Profile />} />
           <Route path="/group" exact component={() => <Group />} />
         </Switch>

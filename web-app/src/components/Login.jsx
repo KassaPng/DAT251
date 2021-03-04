@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import Nav from 'react-bootstrap/Nav'
 import "../containers/Login.css";
 
 function Login() {
@@ -14,6 +15,7 @@ function Login() {
   function handleSubmit(event) {
     event.preventDefault();
   }
+
 
   return (
     <div className="Login">
@@ -38,6 +40,10 @@ function Login() {
         <Button block size="lg" type="submit" disabled={!validateForm()}>
           Login
         </Button>
+        <Form.Text className="text-muted"  href="/home">
+          New user? Register <a href="/register">here</a>
+
+        </Form.Text>
       </Form>
     </div>
   );
