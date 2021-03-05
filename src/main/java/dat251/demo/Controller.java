@@ -80,14 +80,43 @@ public class Controller {
         }
     }
 
+    @PutMapping("/users/{userName}")
+    public @ResponseBody User updateUser(@PathVariable String userName,
+                                         @RequestBody Map<String, String> json) {
+        log.info("Attempting to alter existing user with username: " + userName);
+        User user = userRepository.findByUserName(userName);
+        if (user == null) {
+            log.info("User with username: " + userName + " did not exist in the database");
+            return null;
+        }
+        String newName = "" + json.get("newName");
+        String newPassword = "" + json.get("newPassword");
+        String repeatedNewPassword = "" + json.get("repeatedNewPassword");
+        updateName(user, newName);
+        updatePassword(user, newPassword, repeatedNewPassword);
+        log.info("Successfully updated the user with ID: " + user.getId());
+        return user;
+    }
 
-    // Update
+    private void updateName(User user, String newName) {
+        if (!newName.isEmpty() && !newName.equals("null")) {
+            user.setName(newName);
+            userRepository.save(user);
+            log.info("Updated user's name");
+        }
+    }
 
-
-
-
-
-
+    private void updatePassword(User user, String newPassword, String repeatedNewPassword) {
+        if (!newPassword.isEmpty() && !newPassword.equals("null")) {
+            if (newPassword.equals(repeatedNewPassword)) {
+                user.setPasswordAsHash(newPassword);
+                userRepository.save(user);
+                log.info("Updated user's password");
+            } else {
+                log.info("New password and repeated password did not match");
+            }
+        }
+    }
 
     @DeleteMapping("/users/{userName}")
     public String deleteUser(@PathVariable String userName) {
