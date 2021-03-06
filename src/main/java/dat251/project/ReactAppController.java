@@ -1,4 +1,4 @@
-package dat251.demo;
+package dat251.project;
 
 import javax.servlet.http.HttpServletRequest;
 
