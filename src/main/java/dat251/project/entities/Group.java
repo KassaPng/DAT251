@@ -1,22 +1,19 @@
-package entities;
+package dat251.project.entities;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import javax.persistence.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Getter
-@Setter
-@NoArgsConstructor
 @Entity
-@Table(name = "group")
+@Table(name = "groups")
 public class Group {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String groupName;
+
+
+    public Group() {
+
+    }
 
     public Group(String groupName) {
         if (groupName.length() < 3) {
@@ -25,9 +22,21 @@ public class Group {
         this.groupName = groupName;
     }
 
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
 
+    public String getGroupName() {
+        return groupName;
+    }
 
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 
     @Override
     public String toString() {

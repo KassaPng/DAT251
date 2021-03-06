@@ -1,4 +1,4 @@
-package entities;
+package dat251.project.entities;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,17 +1,15 @@
-package dat251.demo;
+package dat251.project;
 
-import entities.Group;
-import entities.User;
-import org.apache.tomcat.jni.Poll;
+import dat251.project.entities.Group;
+import dat251.project.entities.User;
+import dat251.project.repositories.GroupRepository;
+import dat251.project.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import repositories.GroupRepository;
-import repositories.UserRepository;
 
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 public class Controller {
@@ -47,6 +45,10 @@ public class Controller {
         String name = "" + json.get("name");
         String password = "" + json.get("password");
         String repeatPassword = "" + json.get("repeatPassword");
+        if (!(userRepository.findByUserName(userName) == null)) {
+            log.info("The username was already taken");
+            return "Failed to create user.\nUsername was already taken";
+        }
         if (password.equals(repeatPassword)) {
             User user = new User(name, userName, password);
             userRepository.save(user);
@@ -74,7 +76,7 @@ public class Controller {
             log.info("Failed to retrieve user with userName: " + userName);
             return null;
         } else {
-            log.info("Successfully retrieved user " + user.getUserName()
+            log.info("Successfully retrieved user: " + user.getUserName()
                     + " with ID: " + user.getId());
             return user;
         }
@@ -167,7 +169,7 @@ public class Controller {
             log.info("Failed to retrieve group with ID: " + groupID);
             return null;
         } else {
-            log.info("Successfully retrieved group " + group.getGroupName()
+            log.info("Successfully retrieved group: " + group.getGroupName()
                     + " with ID: " + group.getId());
             return group;
         }
