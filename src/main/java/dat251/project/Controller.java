@@ -121,10 +121,18 @@ public class Controller {
             return "Failed to delete user\n" +
                     "The user did not exist in the database";
         } else {
+            removeForeignKeyToGroups(user);
             long userId = user.getId();
             userRepository.delete(user);
             log.info("Successfully deleted the user with ID: " + userId);
             return "User deleted";
+        }
+    }
+
+    private void removeForeignKeyToGroups(User user) {
+        for (Group group : user.getGroups()) {
+            group.removeUserFromGroup(user);
+            groupRepository.save(group);
         }
     }
 
@@ -200,6 +208,7 @@ public class Controller {
             return "Failed to delete group\n" +
                     "The group did not exist in the database";
         } else {
+            removeForeignKeyToUsers(group);
             String groupName = group.getGroupName();
             groupRepository.delete(group);
             log.info("Successfully deleted group with name: " + groupName
@@ -208,6 +217,12 @@ public class Controller {
         }
     }
 
+    private void removeForeignKeyToUsers(Group group) {
+        for (User user : group.getMembers()) {
+            user.removeGroupFromListOfGroups(group);
+            userRepository.save(user);
+        }
+    }
 
     @PutMapping("/groups/{groupID}/members")
     public @ResponseBody Group addUserToGroup(@PathVariable long groupID,
@@ -233,7 +248,6 @@ public class Controller {
             log.info("Failed to add user: " + user.getUserName()
                     + " as a member to group with ID: " + group.getId());
         }
-        System.out.println("group = " + group);
         return group;
     }
 
@@ -262,7 +276,6 @@ public class Controller {
             log.info("Failed to remove user: " + user.getUserName()
                     + " from the list of members of group with ID: " + group.getId());
         }
-        System.out.println("group = " + group);
         return group;
     }
 
