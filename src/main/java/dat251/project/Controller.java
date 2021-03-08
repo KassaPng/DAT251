@@ -45,8 +45,10 @@ public class Controller {
         if (password.equals(repeatPassword)) {
             User user = new User(name, userName, password);
             userRepository.save(user);
+            log.info("Successfully created user: " + user.getUserName() + " with ID: " + user.getId());
             return "Successfully created user: " + user.toString();
         } else {
+            log.info("Failed to create the new user");
             return "Failed to create user.\nPassword did not match repeat password";
         }
     }
@@ -65,8 +67,7 @@ public class Controller {
         log.info("Trying to find user with username: " + userName);
         // This returns a JSON or XML with the users
         User user = userRepository.findByUserName(userName);
-        if (user == null) {
-            log.info("Failed to retrieve user with userName: " + userName);
+        if (notExistsInDatabase(user, "User")) {
             return null;
         } else {
             log.info("Successfully retrieved user: " + user.getUserName()
@@ -80,8 +81,7 @@ public class Controller {
                                          @RequestBody Map<String, String> json) {
         log.info("Attempting to alter existing user with username: " + userName);
         User user = userRepository.findByUserName(userName);
-        if (user == null) {
-            log.info("User with username: " + userName + " did not exist in the database");
+        if (notExistsInDatabase(user, "User")) {
             return null;
         }
         String newName = "" + json.get("newName");
@@ -117,7 +117,7 @@ public class Controller {
     public String deleteUser(@PathVariable String userName) {
         log.info("Attempting to delete a user with username: " + userName);
         User user = userRepository.findByUserName(userName);
-        if (user == null) {
+        if (notExistsInDatabase(user, "User")) {
             return "Failed to delete user\n" +
                     "The user did not exist in the database";
         } else {
@@ -141,8 +141,10 @@ public class Controller {
         if (groupName.length() >= 3) {
             Group group = new Group(groupName);
             groupRepository.save(group);
+            log.info("Successfully created group: " + group.getGroupName() + " with ID: " + group.getId());
             return "Successfully created group: " + group.toString();
         } else {
+            log.info("Failed to create the new group");
             return "Failed to create new group." +
                     "\nGroup name must contain at least 3 characters";
         }
@@ -158,8 +160,7 @@ public class Controller {
     public @ResponseBody Group getGroup(@PathVariable long groupID) {
         log.info("Trying to find a specific group with id: " + groupID);
         Group group = groupRepository.findById(groupID);
-        if (group == null) {
-            log.info("Failed to retrieve group with ID: " + groupID);
+        if (notExistsInDatabase(group, "Group")) {
             return null;
         } else {
             log.info("Successfully retrieved group: " + group.getGroupName()
@@ -173,8 +174,7 @@ public class Controller {
                                            @RequestBody Map<String, String> json) {
         log.info("Attempting to alter group with ID: " + groupID);
         Group group = groupRepository.findById(groupID);
-        if (group == null) {
-            log.info("Group with ID: " + groupID + " did not exist in the database");
+        if (notExistsInDatabase(group, "Group")) {
             return null;
         }
         String newGroupName = "" + json.get("groupName");
@@ -192,12 +192,11 @@ public class Controller {
         }
     }
 
-
     @DeleteMapping("/groups/{groupID}")
     public String deleteGroup(@PathVariable long groupID) {
         log.info("Attempting to delete group with ID: " + groupID);
         Group group = groupRepository.findById(groupID);
-        if (group == null) {
+        if (notExistsInDatabase(group, "Group")) {
             return "Failed to delete group\n" +
                     "The group did not exist in the database";
         } else {
@@ -208,5 +207,75 @@ public class Controller {
             return "Group deleted";
         }
     }
+
+
+    @PutMapping("/groups/{groupID}/members")
+    public @ResponseBody Group addUserToGroup(@PathVariable long groupID,
+                                              @RequestBody Map<String, String> json) {
+        log.info("Attempting to add a user to group with ID: " + groupID);
+        Group group = groupRepository.findById(groupID);
+        String nameOfUser = "" + json.get("userName");
+        User user = userRepository.findByUserName(nameOfUser);
+        if (notExistsInDatabase(group, "Group")
+                || notExistsInDatabase(user, "User")) {
+            return null;
+        }
+        if (group.addUserToGroup(user)) {
+            log.info("Successfully made user: " + user.getUserName()
+                    + " a member of group with ID: " + group.getId());
+            groupRepository.save(group);
+            if(!user.addGroupToUsersListOfGroups(group)) {
+                log.info("Something went wrong when trying to add group to users list of groups");
+            } else {
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed to add user: " + user.getUserName()
+                    + " as a member to group with ID: " + group.getId());
+        }
+        System.out.println("group = " + group);
+        return group;
+    }
+
+
+    @DeleteMapping("/groups/{groupID}/members")
+    public @ResponseBody Group removeUserFromGroup(@PathVariable long groupID,
+                                              @RequestBody Map<String, String> json) {
+        log.info("Attempting to remove a user from group with ID: " + groupID);
+        Group group = groupRepository.findById(groupID);
+        String nameOfUser = "" + json.get("userName");
+        User user = userRepository.findByUserName(nameOfUser);
+        if (notExistsInDatabase(group, "Group")
+                || notExistsInDatabase(user, "User")) {
+            return null;
+        }
+        if (group.removeUserFromGroup(user)) {
+            log.info("Successfully removed user: " + user.getUserName()
+                    + " from list of members of group with ID: " + group.getId());
+            groupRepository.save(group);
+            if(!user.removeGroupFromListOfGroups(group)) {
+                log.info("Something went wrong when trying to remove group from users list of groups");
+            } else {
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed to remove user: " + user.getUserName()
+                    + " from the list of members of group with ID: " + group.getId());
+        }
+        System.out.println("group = " + group);
+        return group;
+    }
+
+
+
+    private boolean notExistsInDatabase(Object object, String objectName) {
+        if (object == null) {
+            log.info(objectName + " did not exist in the database");
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }
