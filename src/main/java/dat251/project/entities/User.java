@@ -91,6 +91,14 @@ public class User {
         this.passwordAsHash = passwordAsHash;
     }
 
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
+
     @Override
     public String toString() {
         return String.format(

@@ -63,6 +63,14 @@ public class Group {
         this.groupName = groupName;
     }
 
+    public List<User> getMembers() {
+        return members;
+    }
+
+    public void setMembers(List<User> members) {
+        this.members = members;
+    }
+
     @Override
     public String toString() {
         return String.format(
