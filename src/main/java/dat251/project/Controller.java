@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -55,15 +57,20 @@ public class Controller {
 
     @GetMapping("/users")
     public @ResponseBody
-    Iterable<User> getAllUsers() {
+    Iterable<String > getAllUsers() {
         log.info("Getting all users");
         // This returns a JSON or XML with the users
-        return userRepository.findAll();
+        Iterable<User> users = userRepository.findAll();
+        List<String> usersAsString = new ArrayList<>();
+        for (User user : users) {
+            usersAsString.add(user.toString());
+        }
+        return usersAsString;
     }
 
     @GetMapping("/users/{userName}")
     public @ResponseBody
-    User getUser(@PathVariable String userName) {
+    String getUser(@PathVariable String userName) {
         log.info("Trying to find user with username: " + userName);
         // This returns a JSON or XML with the users
         User user = userRepository.findByUserName(userName);
@@ -72,12 +79,12 @@ public class Controller {
         } else {
             log.info("Successfully retrieved user: " + user.getUserName()
                     + " with ID: " + user.getId());
-            return user;
+            return user.toString();
         }
     }
 
     @PutMapping("/users/{userName}")
-    public @ResponseBody User updateUser(@PathVariable String userName,
+    public @ResponseBody String updateUser(@PathVariable String userName,
                                          @RequestBody Map<String, String> json) {
         log.info("Attempting to alter existing user with username: " + userName);
         User user = userRepository.findByUserName(userName);
@@ -90,7 +97,7 @@ public class Controller {
         updateName(user, newName);
         updatePassword(user, newPassword, repeatedNewPassword);
         log.info("Successfully updated the user with ID: " + user.getId());
-        return user;
+        return user.toString();
     }
 
     private void updateName(User user, String newName) {
@@ -151,13 +158,18 @@ public class Controller {
     }
 
     @GetMapping("/groups")
-    public @ResponseBody Iterable<Group> getAllGroups() {
+    public @ResponseBody Iterable<String> getAllGroups() {
         log.info("Getting all registered groups");
-        return groupRepository.findAll();
+        Iterable<Group> groups = groupRepository.findAll();
+        List<String> groupsAsString = new ArrayList<>();
+        for (Group group : groups) {
+            groupsAsString.add(group.toString());
+        }
+        return groupsAsString;
     }
 
     @GetMapping("/groups/{groupID}")
-    public @ResponseBody Group getGroup(@PathVariable long groupID) {
+    public @ResponseBody String getGroup(@PathVariable long groupID) {
         log.info("Trying to find a specific group with id: " + groupID);
         Group group = groupRepository.findById(groupID);
         if (notExistsInDatabase(group, "Group")) {
@@ -165,12 +177,12 @@ public class Controller {
         } else {
             log.info("Successfully retrieved group: " + group.getGroupName()
                     + " with ID: " + group.getId());
-            return group;
+            return group.toString();
         }
     }
 
     @PutMapping("/groups/{groupID}")
-    public @ResponseBody Group updateGroup(@PathVariable long groupID,
+    public @ResponseBody String updateGroup(@PathVariable long groupID,
                                            @RequestBody Map<String, String> json) {
         log.info("Attempting to alter group with ID: " + groupID);
         Group group = groupRepository.findById(groupID);
@@ -180,7 +192,7 @@ public class Controller {
         String newGroupName = "" + json.get("groupName");
         updateGroupName(group, newGroupName);
         log.info("Successfully updated the group information");
-        return group;
+        return group.toString();
     }
 
     private void updateGroupName(Group group, String newGroupName) {
@@ -210,7 +222,7 @@ public class Controller {
 
 
     @PutMapping("/groups/{groupID}/members")
-    public @ResponseBody Group addUserToGroup(@PathVariable long groupID,
+    public @ResponseBody String addUserToGroup(@PathVariable long groupID,
                                               @RequestBody Map<String, String> json) {
         log.info("Attempting to add a user to group with ID: " + groupID);
         Group group = groupRepository.findById(groupID);
@@ -234,12 +246,12 @@ public class Controller {
                     + " as a member to group with ID: " + group.getId());
         }
         System.out.println("group = " + group);
-        return group;
+        return group.toString();
     }
 
 
     @DeleteMapping("/groups/{groupID}/members")
-    public @ResponseBody Group removeUserFromGroup(@PathVariable long groupID,
+    public @ResponseBody String removeUserFromGroup(@PathVariable long groupID,
                                               @RequestBody Map<String, String> json) {
         log.info("Attempting to remove a user from group with ID: " + groupID);
         Group group = groupRepository.findById(groupID);
@@ -263,7 +275,7 @@ public class Controller {
                     + " from the list of members of group with ID: " + group.getId());
         }
         System.out.println("group = " + group);
-        return group;
+        return group.toString();
     }
 
 
