@@ -25,13 +25,6 @@ public class Controller {
         this.groupRepository = groupRepository;
     }
 
-
-    @RequestMapping("/hello")
-    public String index() {
-        return "Hello World!";
-    }
-
-
 /*
     USER REQUESTS
 */
