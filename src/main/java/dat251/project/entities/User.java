@@ -1,14 +1,16 @@
 package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.h2.util.json.JSONArray;
+import org.h2.util.json.JSONObject;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -23,9 +25,24 @@ public class User {
     @JsonIgnore // Enable to prevent password from being used in output.
     private String passwordAsHash;
 
+    @JsonIgnore
     @ManyToMany
     private List<Group> groups;
 
+    @JsonProperty("groups")
+    public Map<Integer, String> getGroupsAsJsonString() {
+        return toMap(groups);
+    }
+
+    // Construct the object to be included in the JSON response instead of groups
+    private Map<Integer, String> toMap(List<Group> groups) {
+        Map<Integer, String> json = new HashMap<>();
+        int index = 0;
+        for (Group group : groups) {
+            json.put(index++, group.getGroupName());
+        }
+        return json;
+    }
 
     public User() {
 

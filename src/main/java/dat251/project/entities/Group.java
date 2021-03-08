@@ -1,9 +1,10 @@
 package dat251.project.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "groups")
@@ -13,8 +14,25 @@ public class Group {
     private long id;
     private String groupName;
 
+    @JsonIgnore
     @ManyToMany
     private List<User> members;
+
+    @JsonProperty("members")
+    public Map<Integer, String> getMembersAsJsonString() {
+        return toMap(members);
+    }
+
+    // Construct the object to be included in the JSON response instead of members
+    private Map<Integer, String> toMap(List<User> members) {
+        Map<Integer, String> json = new HashMap<>();
+        int index = 0;
+        for (User user : members) {
+            json.put(index++, user.getUserName());
+        }
+        return json;
+    }
+
 
 
     public Group() {
