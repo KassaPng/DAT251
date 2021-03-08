@@ -1,6 +1,9 @@
 package dat251.project.entities;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @Table(name = "groups")
@@ -9,6 +12,9 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String groupName;
+
+    @ManyToMany
+    private List<User> members;
 
 
     public Group() {
@@ -20,6 +26,25 @@ public class Group {
             throw new IllegalArgumentException("Group name must be at least three characters long");
         }
         this.groupName = groupName;
+        this.members = new ArrayList<>();
+    }
+
+    public boolean addUserToGroup(User user) {
+        if (!(user == null) && !members.contains(user)) {
+            members.add(user);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeUserFromGroup(User user) {
+        if (!(user == null) && members.contains(user)) {
+            members.remove(user);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public long getId() {
@@ -41,9 +66,20 @@ public class Group {
     @Override
     public String toString() {
         return String.format(
-                "User[Id='%d', " +
-                        "groupName='%s']",
-                id, groupName
+                "Group[Id='%d', " +
+                        "groupName='%s', " +
+                        "members='%s']",
+                id, groupName, printMembers()
         );
+    }
+
+    private String printMembers() {
+        StringBuilder out = new StringBuilder("[ ");
+        for (User user : members) {
+            out.append(user.getUserName()).append(", ");
+        }
+        out.deleteCharAt(out.length() - 2);
+        out.append("]");
+        return out.toString();
     }
 }
