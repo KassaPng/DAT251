@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -18,10 +20,11 @@ public class User {
     private String userName;
     private String name;
 
-
     @JsonIgnore // Enable to prevent password from being used in output.
- // @Setter(AccessLevel.NONE)
     private String passwordAsHash;
+
+    @ManyToMany
+    private List<Group> groups;
 
 
     public User() {
@@ -35,6 +38,25 @@ public class User {
         this.name = name;
         this.userName = userName;
         this.passwordAsHash = password;
+        this.groups = new ArrayList<>();
+    }
+
+    public boolean addGroupToUsersListOfGroups(Group group) {
+        if (!(group == null) && !groups.contains(group)) {
+            groups.add(group);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeGroupFromListOfGroups(Group group) {
+        if (!(group == null) && groups.contains(group)) {
+            groups.remove(group);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public long getId() {
@@ -73,9 +95,21 @@ public class User {
     public String toString() {
         return String.format(
                 "User[Id='%d', " +
-                        "name= '%s', " +
-                        "userName='%s']",
-                id, name, userName
+                        "name='%s', " +
+                        "userName='%s', " +
+                        "groups='%s']",
+                id, name, userName, printGroups()
         );
     }
+
+    private String printGroups() {
+        StringBuilder out = new StringBuilder("[ ");
+        for (Group group : groups) {
+            out.append(group.getGroupName()).append(", ");
+        }
+        out.deleteCharAt(out.length() - 2);
+        out.append("]");
+        return out.toString();
+    }
+
 }
