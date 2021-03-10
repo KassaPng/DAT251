@@ -3,6 +3,8 @@ name: CD Heroku
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   build:
@@ -16,4 +18,4 @@ jobs:
         with:
           java-version: 1.11
       - name: Build with Maven
-        run: mvn clean heroku:deploy
+        run: HEROKU_API_KEY="${{secrets.heroku_api_key}}" mvn heroku:deploy
