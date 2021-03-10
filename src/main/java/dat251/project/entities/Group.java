@@ -18,22 +18,15 @@ public class Group {
     @ManyToMany
     private List<User> members;
 
-    @JsonProperty("members")
-    public Map<Integer, String> getMembersAsJsonString() {
-        return toMap(members);
-    }
-
     // Construct the object to be included in the JSON response instead of members
-    private Map<Integer, String> toMap(List<User> members) {
-        Map<Integer, String> json = new HashMap<>();
-        int index = 0;
-        for (User user : members) {
-            json.put(index++, user.getUserName());
+    @JsonProperty("members")
+    public List<String> getMembersAsJsonString() {
+        List<String> memberNames = new ArrayList<>();
+        for (User member : members) {
+            memberNames.add(member.getName());
         }
-        return json;
+        return memberNames;
     }
-
-
 
     public Group() {
 
@@ -100,6 +93,9 @@ public class Group {
     }
 
     private String printMembers() {
+        if (members.isEmpty()) {
+            return "[]";
+        }
         StringBuilder out = new StringBuilder("[ ");
         for (User user : members) {
             out.append(user.getUserName()).append(", ");
