@@ -24,11 +24,11 @@ jobs:
       run: mvn -B package --file pom.xml
 
   merge:
-
+      needs: build
       runs-on: ubuntu-latest
 
       steps:
-      - name: Merge staging -> uat
+      - name: Merge development -> main
         uses: devmasx/merge-branch@v1.3.1
         with:
           type: now
