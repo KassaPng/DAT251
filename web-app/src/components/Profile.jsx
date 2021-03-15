@@ -4,9 +4,26 @@ class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      name: 'Ola Nordmann',
+      name: 'test',
     }
   }
+
+  getUserData = () => {
+    // TODO: pass email via props or cookies
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', () => {
+      const data = xhr.responseText;
+    })
+    const URL = 'http://localhost:8080/users/';
+
+    xhr.open('GET', URL);
+    xhr.send(URL);
+  }
+  componentDidMount() {
+
+  }
+
 
   render() {
     return (
