@@ -74,6 +74,7 @@ function Register(props) {
                 <Button
                     block size="lg"
                     type="submit"
+                    href = "../"
                     disabled={!validateForm()}
                     onClick = {e => {sendRegisterRequest()}} // send HTTP request here
                 >

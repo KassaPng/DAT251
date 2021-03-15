@@ -8,6 +8,8 @@ function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [matching, setMatching] = useState("");
+  const [receivedPassword, setReceivedPassword] = useState("");
+
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -17,16 +19,30 @@ function Login(props) {
     event.preventDefault();
   }
 
+  function redirectToNextPage() {
+    console.log("password ", password)
+    console.log("receivedPassword ", receivedPassword)
+    const indexSuffix = email.indexOf("@");
+    const prefix = email.slice(0, indexSuffix)
+    return "/profile/" + prefix
+
+    // Uncomment this once password check can be performed in the backend
+    // if (password === receivedPassword)
+    //   return "/" + email
+    // else if (receivedPassword !== "")
+    //   alert("Invalid information, try again");
+  }
 
   function sendLoginRequest(){
     const xhr = new XMLHttpRequest();
 
     xhr.addEventListener('load', () => {
       const data = xhr.responseText;
+      console.log("data", data)
       if (data !== "") {
         const jsonResponse = JSON.parse(data);
-        const actualPassword = jsonResponse.password; // TODO: password matching
-        props.history.push("../profile/" + email)
+        const receivedPassword = jsonResponse.password;
+        setReceivedPassword(receivedPassword)
       }
       else {
         alert("Invalid information, try again");
@@ -63,6 +79,7 @@ function Login(props) {
         <Button block size="lg"
                 type="submit"
                 disabled={!validateForm()}
+                href = {redirectToNextPage()}
                 onClick = {e => {sendLoginRequest()}} // send HTTP request here
         >
           Login
