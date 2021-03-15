@@ -140,6 +140,9 @@ public class Controller {
     GROUP REQUESTS
 */
 
+    private static final String standardGroupDescription = "Nothing here yet." +
+            "\nLet others know what this group is all about!";
+
     @PostMapping("/groups")
     public String createANewGroup(@RequestBody Map<String, String> json) {
         log.info("Attempting to create a new Group");
@@ -147,7 +150,7 @@ public class Controller {
         // string to prevent null values.
         String groupName = "" + json.get("groupName");
         if (groupName.length() >= 3) {
-            Group group = new Group(groupName);
+            Group group = new Group(groupName, standardGroupDescription);
             groupRepository.save(group);
             log.info("Successfully created group: " + group.getGroupName() + " with ID: " + group.getId());
             return "Successfully created group: " + group.toString();
@@ -186,9 +189,19 @@ public class Controller {
             return null;
         }
         String newGroupName = "" + json.get("groupName");
+        String newDescription = "" + json.get("description");
         updateGroupName(group, newGroupName);
+        updateDescription(group, newDescription);
         log.info("Successfully updated the group information");
         return group;
+    }
+
+    private void updateDescription(Group group, String newDescription) {
+        if (!newDescription.equals("null")) {
+            group.setDescription(newDescription);
+            groupRepository.save(group);
+            log.info("Updated group description to: " + newDescription);
+        }
     }
 
     private void updateGroupName(Group group, String newGroupName) {
