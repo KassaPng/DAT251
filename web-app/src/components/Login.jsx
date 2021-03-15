@@ -4,9 +4,12 @@ import Button from "react-bootstrap/Button";
 //import Nav from 'react-bootstrap/Nav'
 import "../containers/Login.css";
 
-function Login() {
+function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [matching, setMatching] = useState("");
+  const [receivedPassword, setReceivedPassword] = useState("");
+
 
   function validateForm() {
     return email.length > 0 && password.length > 0;
@@ -14,6 +17,42 @@ function Login() {
 
   function handleSubmit(event) {
     event.preventDefault();
+  }
+
+  function redirectToNextPage() {
+    console.log("password ", password)
+    console.log("receivedPassword ", receivedPassword)
+    const indexSuffix = email.indexOf("@");
+    const prefix = email.slice(0, indexSuffix)
+    return "/profile/" + prefix
+
+    // Uncomment this once password check can be performed in the backend
+    // if (password === receivedPassword)
+    //   return "/" + email
+    // else if (receivedPassword !== "")
+    //   alert("Invalid information, try again");
+  }
+
+  function sendLoginRequest(){
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', () => {
+      const data = xhr.responseText;
+      console.log("data", data)
+      if (data !== "") {
+        const jsonResponse = JSON.parse(data);
+        const receivedPassword = jsonResponse.password;
+        setReceivedPassword(receivedPassword)
+      }
+      else {
+        alert("Invalid information, try again");
+      }
+
+    })
+    const URL = 'http://localhost:8080/users/' + email;
+
+    xhr.open('GET', URL);
+    xhr.send(URL);
   }
 
 
@@ -37,7 +76,12 @@ function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <Button block size="lg"
+                type="submit"
+                disabled={!validateForm()}
+                href = {redirectToNextPage()}
+                onClick = {e => {sendLoginRequest()}} // send HTTP request here
+        >
           Login
         </Button>
         <Form.Text className="text-muted"  href="/home">

@@ -9,10 +9,15 @@ import java.util.*;
 @Entity
 @Table(name = "groups")
 public class Group {
+
+    public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String groupName;
+    @Column(length = MAX_GROUP_DESCRIPTION_LENGTH)
+    private String description;
 
     @JsonIgnore
     @ManyToMany
@@ -32,11 +37,12 @@ public class Group {
 
     }
 
-    public Group(String groupName) {
+    public Group(String groupName, String description) {
         if (groupName.length() < 3) {
             throw new IllegalArgumentException("Group name must be at least three characters long");
         }
         this.groupName = groupName;
+        this.description = description;
         this.members = new ArrayList<>();
     }
 
@@ -74,6 +80,14 @@ public class Group {
         this.groupName = groupName;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public List<User> getMembers() {
         return members;
     }
@@ -87,8 +101,9 @@ public class Group {
         return String.format(
                 "Group[Id='%d', " +
                         "groupName='%s', " +
+                        "description='%s', " +
                         "members='%s']",
-                id, groupName, printMembers()
+                id, groupName, description, printMembers()
         );
     }
 
