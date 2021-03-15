@@ -191,13 +191,13 @@ public class Controller {
         String newGroupName = "" + json.get("groupName");
         String newDescription = "" + json.get("description");
         updateGroupName(group, newGroupName);
-        updateDescription(group, newDescription);
+        updateGroupDescription(group, newDescription);
         log.info("Successfully updated the group information");
         return group;
     }
 
-    private void updateDescription(Group group, String newDescription) {
-        if (!newDescription.equals("null")) {
+    private void updateGroupDescription(Group group, String newDescription) {
+        if (newDescription.length() <= Group.MAX_GROUP_DESCRIPTION_LENGTH && !newDescription.equals("null")) {
             group.setDescription(newDescription);
             groupRepository.save(group);
             log.info("Updated group description to: " + newDescription);

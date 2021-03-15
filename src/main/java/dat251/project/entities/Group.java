@@ -9,10 +9,14 @@ import java.util.*;
 @Entity
 @Table(name = "groups")
 public class Group {
+
+    public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String groupName;
+    @Column(length = MAX_GROUP_DESCRIPTION_LENGTH)
     private String description;
 
     @JsonIgnore
