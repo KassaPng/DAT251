@@ -50,6 +50,19 @@ public class Abilities {
         return abList;
     }
 
+    public void setAbility(String ability, int val) throws NumberFormatException {
+        if(val < 0 || val > 10) {
+            throw new NumberFormatException("val must be between 0 and 10");
+        }
+        abilityMap.put(ability, (double) val);
+    }
 
+    public ArrayList<String> getAbilities() {
+        return abilities;
+    }
+
+    public Map<String, Double> getAbilityMap() {
+        return abilityMap;
+    }
 
 }
