@@ -2,9 +2,11 @@ package dat251.project.entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 public class Abilities {
     private ArrayList<String> abilities;
+    private Map<String, Double> abilityMap;
 
     /**
      *  Creates the list of abilities that should be used for a course.
@@ -18,6 +20,9 @@ public class Abilities {
         }
         if(programming) {
             abilities.addAll(Arrays.asList(getProgrammingAbilities()));
+        }
+        for(int i = 0; i < abilities.size(); i++) {
+            abilityMap.put(abilities.get(i), 0.0);
         }
 
     }
