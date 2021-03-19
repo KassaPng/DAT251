@@ -29,6 +29,7 @@ public class User {
     @ManyToMany
     private List<Group> groups;
 
+
     // Construct the object to be included in the JSON response instead of groups
     @JsonProperty("groups")
     public List<String> getGroupsAsJsonString() {
@@ -51,6 +52,7 @@ public class User {
         this.userName = userName;
         this.passwordAsHash = password;
         this.groups = new ArrayList<>();
+
     }
 
     public boolean addGroupToUsersListOfGroups(Group group) {
