@@ -28,7 +28,7 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Group> groups;
-    private Map<String, Double> abilities = new HashMap<>(); //TODO: should probably be moved to group class
+    
 
     // Construct the object to be included in the JSON response instead of groups
     @JsonProperty("groups")
@@ -52,6 +52,7 @@ public class User {
         this.userName = userName;
         this.passwordAsHash = password;
         this.groups = new ArrayList<>();
+
     }
 
     public boolean addGroupToUsersListOfGroups(Group group) {
