@@ -120,4 +120,8 @@ public class Group {
         out.append("]");
         return out.toString();
     }
+
+    public ArrayList<String> getAbilities() {
+        return listOfAbilities.getAbilities();
+    }
 }

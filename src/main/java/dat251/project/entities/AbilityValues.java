@@ -16,9 +16,6 @@ public class AbilityValues {
         if(val < 0 || val > 10) {
             throw new IllegalArgumentException("Val must be between 0 and 10");
         }
-        if(!abilities.containsKey(ab)) {
-            throw new IllegalArgumentException("ability-name '" + ab + "' does not exist");
-        }
         abilities.put(ab, (double) val);
     }
 
