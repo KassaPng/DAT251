@@ -1,8 +1,10 @@
 package dat251.project.entities;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * This class is used to generate the abilities that should be available within a group
+ */
 public class AbilityList {
     private ArrayList<String> abilities;
 
