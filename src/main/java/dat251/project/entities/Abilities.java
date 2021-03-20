@@ -6,7 +6,6 @@ import java.util.Map;
 
 public class Abilities {
     private ArrayList<String> abilities;
-    private Map<String, Double> abilityMap;
 
     /**
      *  Creates the list of abilities that should be used for a course.
@@ -21,13 +20,9 @@ public class Abilities {
         if(programming) {
             abilities.addAll(Arrays.asList(getProgrammingAbilities()));
         }
-        for(int i = 0; i < abilities.size(); i++) {
-            abilityMap.put(abilities.get(i), 0.0);
-        }
 
     }
-
-
+    
     //abilities for programming courses
     public String[] getProgrammingAbilities() {
         String[] abList = new String[]{
@@ -50,19 +45,8 @@ public class Abilities {
         return abList;
     }
 
-    public void setAbility(String ability, int val) throws NumberFormatException {
-        if(val < 0 || val > 10) {
-            throw new NumberFormatException("val must be between 0 and 10");
-        }
-        abilityMap.put(ability, (double) val);
-    }
-
     public ArrayList<String> getAbilities() {
         return abilities;
-    }
-
-    public Map<String, Double> getAbilityMap() {
-        return abilityMap;
     }
 
 }
