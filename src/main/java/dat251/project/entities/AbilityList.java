@@ -2,9 +2,8 @@ package dat251.project.entities;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
-public class Abilities {
+public class AbilityList {
     private ArrayList<String> abilities;
 
     /**
@@ -12,7 +11,7 @@ public class Abilities {
      * @param general True if general abilities should be used
      * @param programming True if programming abilities should be used
      */
-    public Abilities(boolean general, boolean programming) {
+    public AbilityList(boolean general, boolean programming) {
         abilities = new ArrayList<>();
         if(general) {
             abilities.addAll(Arrays.asList(getGeneralAbilities()));
@@ -22,7 +21,7 @@ public class Abilities {
         }
 
     }
-    
+
     //abilities for programming courses
     public String[] getProgrammingAbilities() {
         String[] abList = new String[]{
