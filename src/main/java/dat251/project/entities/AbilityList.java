@@ -1,19 +1,19 @@
 package dat251.project.entities;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
-public class Abilities {
+/**
+ * This class is used to generate the abilities that should be available within a group
+ */
+public class AbilityList {
     private ArrayList<String> abilities;
-    private Map<String, Double> abilityMap;
 
     /**
      *  Creates the list of abilities that should be used for a course.
      * @param general True if general abilities should be used
      * @param programming True if programming abilities should be used
      */
-    public Abilities(boolean general, boolean programming) {
+    public AbilityList(boolean general, boolean programming) {
         abilities = new ArrayList<>();
         if(general) {
             abilities.addAll(Arrays.asList(getGeneralAbilities()));
@@ -21,12 +21,8 @@ public class Abilities {
         if(programming) {
             abilities.addAll(Arrays.asList(getProgrammingAbilities()));
         }
-        for(int i = 0; i < abilities.size(); i++) {
-            abilityMap.put(abilities.get(i), 0.0);
-        }
 
     }
-
 
     //abilities for programming courses
     public String[] getProgrammingAbilities() {
@@ -50,19 +46,8 @@ public class Abilities {
         return abList;
     }
 
-    public void setAbility(String ability, int val) throws NumberFormatException {
-        if(val < 0 || val > 10) {
-            throw new NumberFormatException("val must be between 0 and 10");
-        }
-        abilityMap.put(ability, (double) val);
-    }
-
     public ArrayList<String> getAbilities() {
         return abilities;
-    }
-
-    public Map<String, Double> getAbilityMap() {
-        return abilityMap;
     }
 
 }
