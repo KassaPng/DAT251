@@ -3,11 +3,11 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 //import Nav from 'react-bootstrap/Nav'
 import "../containers/Login.css";
+import {getSessionCookie, updateSessionCookie, initializeCookie} from "../Cookies/Session";
 
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [matching, setMatching] = useState("");
   const [receivedPassword, setReceivedPassword] = useState("");
 
 
@@ -20,10 +20,12 @@ function Login(props) {
   }
 
   function redirectToNextPage() {
+    initializeCookie()
     console.log("password ", password)
     console.log("receivedPassword ", receivedPassword)
     const indexSuffix = email.indexOf("@");
     const prefix = email.slice(0, indexSuffix)
+    updateSessionCookie("email", email);
     return "/profile/" + prefix
 
     // Uncomment this once password check can be performed in the backend
@@ -32,6 +34,8 @@ function Login(props) {
     // else if (receivedPassword !== "")
     //   alert("Invalid information, try again");
   }
+
+
 
   function sendLoginRequest(){
     const xhr = new XMLHttpRequest();

@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.matching.AbilityList;
 
 import javax.persistence.*;
 import java.util.*;
@@ -11,7 +12,8 @@ import java.util.*;
 public class Group {
 
     public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
-
+    @Transient
+    private AbilityList listOfAbilities;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -44,6 +46,7 @@ public class Group {
         this.groupName = groupName;
         this.description = description;
         this.members = new ArrayList<>();
+        this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
     }
 
     public boolean addUserToGroup(User user) {
@@ -118,5 +121,9 @@ public class Group {
         out.deleteCharAt(out.length() - 2);
         out.append("]");
         return out.toString();
+    }
+
+    public ArrayList<String> getAbilities() {
+        return listOfAbilities.getAbilities();
     }
 }

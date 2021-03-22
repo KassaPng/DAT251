@@ -1,4 +1,4 @@
-package dat251.project;
+package dat251.project.controllers;
 
 import javax.servlet.http.HttpServletRequest;
 

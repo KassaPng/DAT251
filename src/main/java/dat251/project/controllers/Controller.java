@@ -1,4 +1,4 @@
-package dat251.project;
+package dat251.project.controllers;
 
 import dat251.project.entities.Group;
 import dat251.project.entities.User;

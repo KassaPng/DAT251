@@ -2,8 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.h2.util.json.JSONArray;
-import org.h2.util.json.JSONObject;
+import dat251.project.matching.AbilityValues;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +28,7 @@ public class User {
     @ManyToMany
     private List<Group> groups;
 
+
     // Construct the object to be included in the JSON response instead of groups
     @JsonProperty("groups")
     public List<String> getGroupsAsJsonString() {
@@ -38,6 +38,8 @@ public class User {
         }
         return groupNames;
     }
+    @Transient
+    private Map<Group, AbilityValues> abilities; //The users abilities for each group.
 
     public User() {
 
@@ -51,11 +53,19 @@ public class User {
         this.userName = userName;
         this.passwordAsHash = password;
         this.groups = new ArrayList<>();
+        this.abilities = new HashMap<>();
+
     }
 
     public boolean addGroupToUsersListOfGroups(Group group) {
         if (!(group == null) && !groups.contains(group)) {
             groups.add(group);
+            //create mapping for the group in abilities
+            AbilityValues ab = new AbilityValues();
+            for(int i = 0; i < group.getAbilities().size(); i++) {
+                ab.setAbilities(group.getAbilities().get(i), 0);
+            }
+            abilities.put(group, ab);
             return true;
         } else {
             return false;
@@ -65,6 +75,7 @@ public class User {
     public boolean removeGroupFromListOfGroups(Group group) {
         if (!(group == null) && groups.contains(group)) {
             groups.remove(group);
+            abilities.remove(group);
             return true;
         } else {
             return false;
