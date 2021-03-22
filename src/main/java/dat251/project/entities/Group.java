@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.matching.AbilityList;
 
 import javax.persistence.*;
 import java.util.*;
@@ -11,6 +12,7 @@ import java.util.*;
 public class Group {
 
     public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
+    @Transient
     private AbilityList listOfAbilities;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

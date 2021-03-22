@@ -1,4 +1,4 @@
-package dat251.project;
+package dat251.project.matching;
 
 import java.util.ArrayList;
 import java.util.HashMap;

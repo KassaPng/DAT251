@@ -8,22 +8,20 @@ class Profile extends React.Component {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState, nextContext) {
-    return true;
-  }
 
   getUserData = () => {
-    // TODO: pass email via props or cookies
     const xhr = new XMLHttpRequest();
 
     xhr.addEventListener('load', () => {
       const data = xhr.responseText;
-      console.log(data);
+      const jsonResponse = JSON.parse(data)
+
       this.setState({
-        name: data.name,
-        userName: data.userName,
-        groups: data.groups
+        name: jsonResponse["name"],
+        userName: jsonResponse["userName"],
+        groups: jsonResponse["groups"]
       });
+
     })
     const URL = 'http://localhost:8080/users/' + this.state.email;
 

@@ -1,4 +1,4 @@
-package dat251.project.entities;
+package dat251.project.matching;
 
 
 import java.util.HashMap;
