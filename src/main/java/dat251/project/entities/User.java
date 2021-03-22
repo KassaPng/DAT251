@@ -2,8 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.h2.util.json.JSONArray;
-import org.h2.util.json.JSONObject;
+import dat251.project.matching.AbilityValues;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,7 +38,7 @@ public class User {
         }
         return groupNames;
     }
-
+    @Transient
     private Map<Group, AbilityValues> abilities; //The users abilities for each group.
 
     public User() {

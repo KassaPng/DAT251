@@ -1,7 +1,6 @@
-package dat251.project;
+package dat251.project.matching;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
