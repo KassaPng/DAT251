@@ -81,6 +81,12 @@ public class User {
             return false;
         }
     }
+    public Map<String, Double> getAbilities(Group group) throws IllegalArgumentException {
+        if(!abilities.containsKey(group)) {
+            throw new IllegalArgumentException("group does not exist");
+        }
+        return abilities.get(group).getAbilityValues();
+    }
 
     public long getId() {
         return id;

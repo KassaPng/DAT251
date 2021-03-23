@@ -1,5 +1,8 @@
 package dat251.project.matching;
 
+import dat251.project.entities.Group;
+import dat251.project.entities.User;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,21 +12,23 @@ public class Kmeans {
 
     public static class Centroid { //Todo: placeholder
         public Map<String, Double> coords;
-
         public Centroid(Map<String, Double> coords) {
             this.coords = coords;
         }
     }
 
-    public class User {  //TODO: Placeholder
-        public String name;
-        public Map<String, Double> attributes;
-    }
+
 
 
     private static Random rand = new Random(5);//TODO: remove seed after testing
     private static int maxIterations = 1000;
-    private static ArrayList<String> abilities; // TODO: Placeholder (List of all ability-names)
+    private static ArrayList<String> abilities;
+    private static Group group;
+
+    public Kmeans(Group group) {
+        this.abilities = group.getAbilities();
+        this.group = group;
+    }
 
 
     public static Map<Centroid, ArrayList<User>> runKmeans(ArrayList<User> users, int k) {
@@ -78,7 +83,7 @@ public class Kmeans {
         double minDist = Double.MAX_VALUE;
         Centroid closest = null;
         for (Centroid centroid : centroids) {
-            double dist = distance(centroid.coords, user.attributes);
+            double dist = distance(centroid.coords, user.getAbilities(group));
             if (dist < minDist) {
                 minDist = dist;
                 closest = centroid;
@@ -106,7 +111,7 @@ public class Kmeans {
         for (User u : users) {
             for (String ab : abilities) {
                 double current = average.get(ab);
-                centroid.coords.put(ab, current + u.attributes.get(ab)); //increment average values by user values
+                centroid.coords.put(ab, current + u.getAbilities(group).get(ab)); //increment average values by user values
             }
         }
         for (String ab : abilities) {
