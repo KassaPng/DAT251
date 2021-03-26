@@ -123,8 +123,8 @@ public class Group {
         return out.toString();
     }
 
-    public ArrayList<String> getAbilities() {
-        return listOfAbilities.getAbilities();
+    public AbilityList getAbilities() {
+        return listOfAbilities;
     }
 
     public void setListOfAbilities(AbilityList listOfAbilities) {

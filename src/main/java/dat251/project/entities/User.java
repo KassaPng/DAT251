@@ -62,8 +62,8 @@ public class User {
             groups.add(group);
             //create mapping for the group in abilities
             AbilityValues ab = new AbilityValues();
-            for(int i = 0; i < group.getAbilities().size(); i++) {
-                ab.setAbilities(group.getAbilities().get(i), 0);
+            for(int i = 0; i < group.getAbilities().getAbilities().size(); i++) {
+                ab.setAbilities(group.getAbilities().getAbilities().get(i), 0);
             }
             abilities.put(group, ab);
             return true;
