@@ -128,6 +128,14 @@ public class User {
         this.groups = groups;
     }
 
+    public Map<Group, AbilityValues> getAbilities() {
+        return abilities;
+    }
+
+    public void setAbilities(Map<Group, AbilityValues> abilities) {
+        this.abilities = abilities;
+    }
+
     @Override
     public String toString() {
         return String.format(

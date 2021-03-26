@@ -126,4 +126,8 @@ public class Group {
     public ArrayList<String> getAbilities() {
         return listOfAbilities.getAbilities();
     }
+
+    public void setListOfAbilities(AbilityList listOfAbilities) {
+        this.listOfAbilities = listOfAbilities;
+    }
 }
