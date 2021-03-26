@@ -50,7 +50,7 @@ public class Group {
     }
 
     public boolean addUserToGroup(User user) {
-        if (!(user == null) && !members.contains(user)) {
+        if (user != null && !members.contains(user)) {
             members.add(user);
             return true;
         } else {
@@ -59,7 +59,7 @@ public class Group {
     }
 
     public boolean removeUserFromGroup(User user) {
-        if (!(user == null) && members.contains(user)) {
+        if (user != null && members.contains(user)) {
             members.remove(user);
             return true;
         } else {

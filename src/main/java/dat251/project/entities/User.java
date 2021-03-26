@@ -58,7 +58,7 @@ public class User {
     }
 
     public boolean addGroupToUsersListOfGroups(Group group) {
-        if (!(group == null) && !groups.contains(group)) {
+        if (group != null && !groups.contains(group)) {
             groups.add(group);
             //create mapping for the group in abilities
             AbilityValues ab = new AbilityValues();
@@ -73,7 +73,7 @@ public class User {
     }
 
     public boolean removeGroupFromListOfGroups(Group group) {
-        if (!(group == null) && groups.contains(group)) {
+        if (group != null && groups.contains(group)) {
             groups.remove(group);
             abilities.remove(group);
             return true;
