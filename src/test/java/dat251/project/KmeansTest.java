@@ -37,12 +37,12 @@ class KmeansTest {
 
     @Test
     public void checkThatKClustersAreCreated() {
-        Kmeans km = new Kmeans(group);
+      /*  Kmeans km = new Kmeans(group);
         Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 5);
         for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
             System.out.println("Key = " + entry.getKey() +
                     ", Value = " + entry.getValue());
-        }
+        }*/
         //assertEquals(2, centroids.size());
     }
 
