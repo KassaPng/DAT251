@@ -58,14 +58,14 @@ public class User {
     }
 
     public boolean addGroupToUsersListOfGroups(Group group) {
-        if (!(group == null) && !groups.contains(group)) {
+        if (group != null && !groups.contains(group)) {
             groups.add(group);
             //create mapping for the group in abilities
-            AbilityValues ab = new AbilityValues();
-            for(int i = 0; i < group.getAbilities().size(); i++) {
-                ab.setAbilities(group.getAbilities().get(i), 0);
+       /*     AbilityValues ab = new AbilityValues();
+            for(int i = 0; i < group.getAbilities().getAbilities().size(); i++) {
+                ab.setAbilities(group.getAbilities().getAbilities().get(i), 0);
             }
-            abilities.put(group, ab);
+            abilities.put(group, ab);*/
             return true;
         } else {
             return false;
@@ -73,7 +73,7 @@ public class User {
     }
 
     public boolean removeGroupFromListOfGroups(Group group) {
-        if (!(group == null) && groups.contains(group)) {
+        if (group != null && groups.contains(group)) {
             groups.remove(group);
             abilities.remove(group);
             return true;
@@ -126,6 +126,14 @@ public class User {
 
     public void setGroups(List<Group> groups) {
         this.groups = groups;
+    }
+
+    public Map<Group, AbilityValues> getAbilities() {
+        return abilities;
+    }
+
+    public void setAbilities(Map<Group, AbilityValues> abilities) {
+        this.abilities = abilities;
     }
 
     @Override
