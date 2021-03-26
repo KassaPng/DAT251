@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -293,10 +294,22 @@ public class Controller {
     }
 
 
+    @GetMapping("/users/{userID}/groups")
+    public @ResponseBody List<Group> getUsersGroups(@PathVariable long userID) {
+        log.info("Attempting to find groups the user with ID: {} is a member off", userID);
+        User user = userRepository.findById(userID);
+        if (notExistsInDatabase(user, "User")) {
+            return null;
+        }
+        return user.getGroups();
+    }
+
+
+
 
     private boolean notExistsInDatabase(Object object, String objectName) {
         if (object == null) {
-            log.info(objectName + " did not exist in the database");
+            log.info("{} did not exist in the database", objectName);
             return true;
         } else {
             return false;
