@@ -58,6 +58,10 @@ public class User {
 
     }
 
+    public boolean verifyPassword(String keyPhrase) {
+        return Credentials.passwordsMatch(keyPhrase, this.passwordAsHash);
+    }
+
     public boolean addGroupToUsersListOfGroups(Group group) {
         if (group != null && !groups.contains(group)) {
             groups.add(group);
@@ -160,5 +164,6 @@ public class User {
         out.append("]");
         return out.toString();
     }
+
 
 }

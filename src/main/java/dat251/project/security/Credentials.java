@@ -5,7 +5,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class Credentials {
 
-
+    private Credentials() {
+    }
 
     static final int SALT_LENGTH = 16;
     static final int HASH_LENGTH = 32;
@@ -23,8 +24,8 @@ public class Credentials {
         return passwordEncoder.encode(password);
     }
 
-
-
-
-
+    public static boolean passwordsMatch(String keyPhrase, String hashedKeyPhrase) {
+        PasswordEncoder encoder = new Argon2PasswordEncoder();
+        return encoder.matches(keyPhrase, hashedKeyPhrase);
+    }
 }

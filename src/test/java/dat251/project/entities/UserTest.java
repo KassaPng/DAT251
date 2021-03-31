@@ -33,7 +33,7 @@ class UserTest {
     void passwordShouldBeTheSameAsWhatItIsSetToBe() {
         String newPassword = "newPassword";
         user.setPasswordAsHash(newPassword);
-        assertEquals(newPassword, user.getPasswordAsHash());
+        assertTrue(user.verifyPassword(newPassword));
     }
 
     /*
