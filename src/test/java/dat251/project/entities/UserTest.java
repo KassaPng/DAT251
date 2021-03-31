@@ -3,6 +3,7 @@ package dat251.project.entities;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,10 +12,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserTest {
 
     private static User user;
+    private static Group group;
 
     @BeforeAll
     static void beforeAll() {
         user = new User("test", "username", "Password");
+        group = new Group("Test Group", "Description");
     }
 
     @Test
@@ -46,12 +49,28 @@ class UserTest {
     */
     @Test
     void passwordShouldBeHashed() {
-        System.out.println("user = " + user.getPasswordAsHash());
         String regularExpressionOfArgon2Hash = "\\$[a-z0-9]+"
                 + "\\$v=[0-9]+"
                 + "\\$m=[0-9]+,t=[0-9]+,p=[0-9]+"
                 + "\\$[a-zA-Z0-9/+]+"
                 + "\\$[a-zA-Z0-9/+]+";
         assertTrue(Pattern.matches(regularExpressionOfArgon2Hash, user.getPasswordAsHash()));
+    }
+
+    @Test
+    void joiningAGroupShouldRegisterThatGroupForTheUser() {
+        user.getGroups().clear();
+        assertTrue(user.getGroups().isEmpty());
+        user.addGroupToUsersListOfGroups(group);
+        assertEquals(group, user.getGroups().get(0));
+    }
+
+    @Test
+    void onlyAListOfGroupNamesShouldBeIncludedInAJsonResponse() {
+        user.getGroups().clear();
+        user.addGroupToUsersListOfGroups(group);
+        assertEquals(group, user.getGroups().get(0));
+        List<String> groupNames = user.getGroupsAsJsonString();
+        assertEquals(group.getGroupName(), groupNames.get(0));
     }
 }
