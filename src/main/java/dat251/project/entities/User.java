@@ -3,6 +3,7 @@ package dat251.project.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dat251.project.matching.AbilityValues;
+import dat251.project.security.Credentials;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,10 +52,14 @@ public class User {
         }
         this.name = name;
         this.userName = userName;
-        this.passwordAsHash = password;
+        setPasswordAsHash(password);
         this.groups = new ArrayList<>();
         this.abilities = new HashMap<>();
 
+    }
+
+    public boolean verifyPassword(String keyPhrase) {
+        return Credentials.passwordsMatch(keyPhrase, this.passwordAsHash);
     }
 
     public boolean addGroupToUsersListOfGroups(Group group) {
@@ -117,7 +122,7 @@ public class User {
     }
 
     public void setPasswordAsHash(String passwordAsHash) {
-        this.passwordAsHash = passwordAsHash;
+        this.passwordAsHash = Credentials.encodePassword(passwordAsHash);
     }
 
     public List<Group> getGroups() {
@@ -159,5 +164,6 @@ public class User {
         out.append("]");
         return out.toString();
     }
+
 
 }
