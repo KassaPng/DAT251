@@ -50,7 +50,7 @@ class UserTest {
         String regularExpressionOfArgon2Hash = "\\$[a-z0-9]+"
                 + "\\$v=[0-9]+"
                 + "\\$m=[0-9]+,t=[0-9]+,p=[0-9]+"
-                + "\\$[a-zA-Z0-9/]+"
+                + "\\$[a-zA-Z0-9/+]+"
                 + "\\$[a-zA-Z0-9/+]+";
         assertTrue(Pattern.matches(regularExpressionOfArgon2Hash, user.getPasswordAsHash()));
     }
