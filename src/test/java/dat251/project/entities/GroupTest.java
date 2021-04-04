@@ -52,7 +52,38 @@ class GroupTest {
         String acceptableGroupName = "HFA";
         assertDoesNotThrow(() -> { new Group(acceptableGroupName, description); });
     }
-    
+
+    @Test
+    void addingAUserToAGroupShouldRegisterThatUserAsAMemberOfThatGroup() {
+        assertTrue(group.addUserToGroup(user));
+        assertEquals(user, group.getMembers().get(0));
+    }
+
+    @Test
+    void addingAUserToAGroupThatIsAlreadyAMemberOfThatGroupShouldDoNothing() {
+        assertTrue(group.addUserToGroup(user));
+        assertFalse(group.addUserToGroup(user));
+        assertEquals(1, group.getMembers().size());
+        assertEquals(user, group.getMembers().get(0));
+    }
+
+    @Test
+    void removingAUserFromAGroupShouldUnregisterThatUserAsAMemberOfThatGroup() {
+        assertTrue(group.addUserToGroup(user));
+        assertEquals(user, group.getMembers().get(0));
+        assertTrue(group.removeUserFromGroup(user));
+        assertTrue(group.getMembers().isEmpty());
+    }
+
+    @Test
+    void removingAUserFromAGroupThatIsNotAMemberOfThatGroupShouldDoNothing() {
+        assertTrue(group.addUserToGroup(user));
+        assertEquals(user, group.getMembers().get(0));
+        assertFalse(group.removeUserFromGroup(user2));
+        assertEquals(1, group.getMembers().size());
+        assertEquals(user, group.getMembers().get(0));
+    }
+
     @Test
     void aGroupShouldBeCorrectlyRepresentedAsAString() {
         group.getMembers().clear();
