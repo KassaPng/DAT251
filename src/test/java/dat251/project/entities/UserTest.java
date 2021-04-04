@@ -22,10 +22,12 @@ class UserTest {
 
     @Test
     void userShouldHaveANameOfAtLeastThreeCharacters() {
-        User user = new User("abc", "username", "password");
-        assertTrue(user.getName().length() >= 3);
-
-        assertThrows(IllegalArgumentException.class, () -> {User user2 = new User("hh", "username","password");});
+        String tooShortName = "AB";
+        String userName = "test";
+        String password = "Password99";
+        assertThrows(IllegalArgumentException.class, () -> new User(tooShortName, userName, password));
+        String acceptableName = "ABC";
+        assertDoesNotThrow(() -> { new User(acceptableName, userName, password); });
     }
 
 /*
