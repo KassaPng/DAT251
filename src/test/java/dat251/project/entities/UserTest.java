@@ -21,7 +21,7 @@ class UserTest {
     }
 
     @Test
-    void userShouldHaveNameOfAtLeastThreeCharacters() {
+    void userShouldHaveANameOfAtLeastThreeCharacters() {
         User user = new User("abc", "username", "password");
         assertTrue(user.getName().length() >= 3);
 
@@ -58,10 +58,39 @@ class UserTest {
     }
 
     @Test
-    void joiningAGroupShouldRegisterThatGroupForTheUser() {
+    void AddingAGroupShouldRegisterThatGroupForTheUser() {
+        user.getGroups().clear();
+        assertTrue(user.getGroups().isEmpty());
+        assertTrue(user.addGroupToUsersListOfGroups(group));
+        assertEquals(group, user.getGroups().get(0));
+    }
+
+    @Test
+    void addingAGroupTheUserIsAlreadyAMemberOfShouldDoNothing() {
         user.getGroups().clear();
         assertTrue(user.getGroups().isEmpty());
         user.addGroupToUsersListOfGroups(group);
+        assertFalse(user.addGroupToUsersListOfGroups(group));
+        assertEquals(1, user.getGroups().size());
+    }
+
+    @Test
+    void removingAGroupShouldUnregisterThatGroupForTheUser() {
+        user.getGroups().clear();
+        assertTrue(user.getGroups().isEmpty());
+        user.addGroupToUsersListOfGroups(group);
+        assertTrue(user.removeGroupFromListOfGroups(group));
+        assertTrue(user.getGroups().isEmpty());
+    }
+
+    @Test
+    void removingAGroupTheUserIsNotAMemberOfShouldDoNothing() {
+        user.getGroups().clear();
+        assertTrue(user.getGroups().isEmpty());
+        user.addGroupToUsersListOfGroups(group);
+        Group group2 = new Group("New Group", "Description");
+        assertFalse(user.removeGroupFromListOfGroups(group2));
+        assertEquals(1, user.getGroups().size());
         assertEquals(group, user.getGroups().get(0));
     }
 
@@ -73,4 +102,38 @@ class UserTest {
         List<String> groupNames = user.getGroupsAsJsonString();
         assertEquals(group.getGroupName(), groupNames.get(0));
     }
+
+    @Test
+    void aUserShouldBeRepresentedWithTheCorrectFormatAsAString() {
+        user.getGroups().clear();
+        assertTrue(user.getGroups().isEmpty());
+        String emptyGroup = "[]";
+        String userAsString = "User[Id='" + user.getId()
+                + "', name='" + user.getName()
+                + "', userName='" + user.getUserName()
+                + "', groups='" + emptyGroup
+                + "']";
+        assertEquals(userAsString, user.toString());
+        user.addGroupToUsersListOfGroups(group);
+        String oneGroup = "[ " + user.getGroups().get(0).getGroupName() + " ]";
+        userAsString = "User[Id='" + user.getId()
+                + "', name='" + user.getName()
+                + "', userName='" + user.getUserName()
+                + "', groups='" + oneGroup
+                + "']";
+        assertEquals(userAsString, user.toString());
+        Group group2 = new Group("Group 2", "description");
+        user.addGroupToUsersListOfGroups(group2);
+        assertEquals(2, user.getGroups().size());
+        String twoGroups = "[ "
+                + user.getGroups().get(0).getGroupName() + ", "
+                + user.getGroups().get(1).getGroupName() + " ]";
+        userAsString = "User[Id='" + user.getId()
+                + "', name='" + user.getName()
+                + "', userName='" + user.getUserName()
+                + "', groups='" + twoGroups
+                + "']";
+        assertEquals(userAsString, user.toString());
+    }
+
 }

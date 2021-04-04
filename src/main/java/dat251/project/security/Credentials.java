@@ -10,7 +10,7 @@ public class Credentials {
 
     static final int SALT_LENGTH = 16;
     static final int HASH_LENGTH = 32;
-    static final int ITERATIONS = 2;
+    static final int ITERATIONS = 8;
     static final int ONE_MEGABYTE_IN_KIBIBYTES = 1024;
     static final int MEMORY_REQUIRED = 64 * ONE_MEGABYTE_IN_KIBIBYTES;
     static final int PARALLELISM = 1;
