@@ -99,6 +99,14 @@ public class Group {
         this.members = members;
     }
 
+    public AbilityList getAbilities() {
+        return listOfAbilities;
+    }
+
+    public void setListOfAbilities(AbilityList listOfAbilities) {
+        this.listOfAbilities = listOfAbilities;
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -121,13 +129,5 @@ public class Group {
         out.deleteCharAt(out.length() - 2);
         out.append("]");
         return out.toString();
-    }
-
-    public AbilityList getAbilities() {
-        return listOfAbilities;
-    }
-
-    public void setListOfAbilities(AbilityList listOfAbilities) {
-        this.listOfAbilities = listOfAbilities;
     }
 }
