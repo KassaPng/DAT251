@@ -45,6 +45,15 @@ class GroupTest {
     }
 
     @Test
+    void groupNamesMustBeAtLeastThreeCharactersLong() {
+        String tooShortGroupName = "HF";
+        String description = "Description";
+        assertThrows(IllegalArgumentException.class, () -> new Group(tooShortGroupName, description));
+        String acceptableGroupName = "HFA";
+        assertDoesNotThrow(() -> { new Group(acceptableGroupName, description); });
+    }
+    
+    @Test
     void aGroupShouldBeCorrectlyRepresentedAsAString() {
         group.getMembers().clear();
         String noMembers = "[]";
