@@ -1,6 +1,6 @@
 package dat251.project.entities;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -11,11 +11,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
 
-    private static User user;
-    private static Group group;
+    private User user;
+    private Group group;
 
-    @BeforeAll
-    static void beforeAll() {
+    @BeforeEach
+    void beforeEach() {
         user = new User("test", "username", "Password");
         group = new Group("Test Group", "Description");
     }
@@ -59,34 +59,26 @@ class UserTest {
 
     @Test
     void AddingAGroupShouldRegisterThatGroupForTheUser() {
-        user.getGroups().clear();
-        assertTrue(user.getGroups().isEmpty());
         assertTrue(user.addGroupToUsersListOfGroups(group));
         assertEquals(group, user.getGroups().get(0));
     }
 
     @Test
     void addingAGroupTheUserIsAlreadyAMemberOfShouldDoNothing() {
-        user.getGroups().clear();
-        assertTrue(user.getGroups().isEmpty());
-        user.addGroupToUsersListOfGroups(group);
+        assertTrue(user.addGroupToUsersListOfGroups(group));
         assertFalse(user.addGroupToUsersListOfGroups(group));
         assertEquals(1, user.getGroups().size());
     }
 
     @Test
     void removingAGroupShouldUnregisterThatGroupForTheUser() {
-        user.getGroups().clear();
-        assertTrue(user.getGroups().isEmpty());
-        user.addGroupToUsersListOfGroups(group);
+        assertTrue(user.addGroupToUsersListOfGroups(group));
         assertTrue(user.removeGroupFromListOfGroups(group));
         assertTrue(user.getGroups().isEmpty());
     }
 
     @Test
     void removingAGroupTheUserIsNotAMemberOfShouldDoNothing() {
-        user.getGroups().clear();
-        assertTrue(user.getGroups().isEmpty());
         user.addGroupToUsersListOfGroups(group);
         Group group2 = new Group("New Group", "Description");
         assertFalse(user.removeGroupFromListOfGroups(group2));
@@ -96,7 +88,6 @@ class UserTest {
 
     @Test
     void onlyAListOfGroupNamesShouldBeIncludedInAJsonResponse() {
-        user.getGroups().clear();
         user.addGroupToUsersListOfGroups(group);
         assertEquals(group, user.getGroups().get(0));
         List<String> groupNames = user.getGroupsAsJsonString();
@@ -105,8 +96,6 @@ class UserTest {
 
     @Test
     void aUserShouldBeRepresentedWithTheCorrectFormatAsAString() {
-        user.getGroups().clear();
-        assertTrue(user.getGroups().isEmpty());
         String emptyGroup = "[]";
         String userAsString = "User[Id='" + user.getId()
                 + "', name='" + user.getName()
