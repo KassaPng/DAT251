@@ -50,7 +50,7 @@ public class Group {
     }
 
     public boolean addUserToGroup(User user) {
-        if (!(user == null) && !members.contains(user)) {
+        if (user != null && !members.contains(user)) {
             members.add(user);
             return true;
         } else {
@@ -59,7 +59,7 @@ public class Group {
     }
 
     public boolean removeUserFromGroup(User user) {
-        if (!(user == null) && members.contains(user)) {
+        if (user != null && members.contains(user)) {
             members.remove(user);
             return true;
         } else {
@@ -99,6 +99,14 @@ public class Group {
         this.members = members;
     }
 
+    public AbilityList getAbilities() {
+        return listOfAbilities;
+    }
+
+    public void setListOfAbilities(AbilityList listOfAbilities) {
+        this.listOfAbilities = listOfAbilities;
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -121,9 +129,5 @@ public class Group {
         out.deleteCharAt(out.length() - 2);
         out.append("]");
         return out.toString();
-    }
-
-    public ArrayList<String> getAbilities() {
-        return listOfAbilities.getAbilities();
     }
 }

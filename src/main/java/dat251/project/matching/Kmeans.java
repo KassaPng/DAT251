@@ -26,7 +26,7 @@ public class Kmeans {
     private static Group group;
 
     public Kmeans(Group group) {
-        this.abilities = group.getAbilities();
+        this.abilities = group.getAbilities().getAbilities();
         this.group = group;
     }
 
