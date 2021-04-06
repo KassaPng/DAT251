@@ -64,9 +64,10 @@ function Login(props) {
     <div className="Login">
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="email">
-          <Form.Label>Email</Form.Label>
+          <Form.Label>Group Name</Form.Label>
           <Form.Control
             autoFocus
+            placeholder="Group name"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
