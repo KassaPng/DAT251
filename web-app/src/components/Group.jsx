@@ -1,14 +1,16 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import {Modal} from "react-bootstrap";
+import {Modal, Table} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
+import {getSessionCookie} from "../Cookies/Session";
 
 
 class Group extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false
+      show: false,
+      groups: ["placeholder"]
     }
   }
   componentDidMount() {
@@ -21,12 +23,13 @@ class Group extends React.Component {
     xhr.addEventListener('load', () => {
       const data = xhr.responseText;
       const jsonResponse = JSON.parse(data)
+
       this.setState({
         groups: jsonResponse["groups"]
       });
 
     })
-    const URL = 'http://localhost:8080/users/' + this.state.email;
+    const URL = 'http://localhost:8080/users/' + getSessionCookie().email;
 
     xhr.open('GET', URL);
     xhr.send(URL);
@@ -50,10 +53,13 @@ class Group extends React.Component {
 
     xhr.open('POST', 'http://localhost:8080/groups')
     xhr.setRequestHeader('Content-Type', 'application/json');
+    console.log(" getSessionCookie().email",  getSessionCookie().email);
+    console.log(" getSessionCookie()",  getSessionCookie())
 
     const jsonString = JSON.stringify( {
       "groupName": this.state.groupToCreateName,
       "description": this.state.groupToCreateDescription,
+      "creatorName": getSessionCookie().email,
 
     })
     xhr.send(jsonString)
@@ -96,10 +102,10 @@ class Group extends React.Component {
               {this.createGroupCreateForm()}
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={ e=> {this.handleClose()}}>
+              <Button variant="secondary" onClick={ e=> {this.handleClose();}}>
                 Close
               </Button>
-              <Button variant="primary" onClick={ e=> {this.sendCreateGroupRequest()}}>Create</Button>
+              <Button variant="primary" onClick={ e=> {this.sendCreateGroupRequest();  this.getGroups();}}>Create</Button>
             </Modal.Footer>
           </Modal>
         </>
@@ -121,6 +127,36 @@ class Group extends React.Component {
   }
 
 
+
+
+  renderGroups = () => {
+    return (
+        <Table group table size="sm">
+          <thead>
+          <tr>
+            <th>Group name</th>
+            <th>Description</th>
+            <th>Number of participants</th>
+          </tr>
+          </thead>
+
+          <tbody>
+
+          {
+            this.state.groups.map((value,index) =>
+            <tr>
+              <td>{value}</td>
+              <td>{value.description}</td>
+              <td>1</td>
+            </tr>
+            )
+          }
+          </tbody>
+        </Table>
+        );
+
+  }
+
   render() {
     return (
 
@@ -141,12 +177,7 @@ class Group extends React.Component {
                   {this.createGroupPopup()}
                 </div>
                 <br/>
-                <p>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting
-                  industry. Lorem Ipsum has been the industry's standard dummy text
-                  ever since the 1500s, when an unknown printer took a galley of
-                  type and scrambled it to make a type specimen book.
-                </p>
+                {this.renderGroups()}
               </div>
             </div>
           </div>

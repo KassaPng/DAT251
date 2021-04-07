@@ -150,9 +150,14 @@ public class Controller {
         // Concatenating request parameters with an empty
         // string to prevent null values.
         String groupName = "" + json.get("groupName");
+        String creatorName = "" +json.get("creatorName"); //adds the group creator to the group by default, reduces the amount of HTTP requests needed
+        User creator = userRepository.findByUserName(creatorName);
         if (groupName.length() >= 3) {
             Group group = new Group(groupName, standardGroupDescription);
+            group.addUserToGroup(creator);
+            creator.addGroupToUsersListOfGroups(group);
             groupRepository.save(group);
+            userRepository.save(creator);
             log.info("Successfully created group: " + group.getGroupName() + " with ID: " + group.getId());
             return "Successfully created group: " + group.toString();
         } else {
