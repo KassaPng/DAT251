@@ -13,6 +13,7 @@ function Navigation(props) {
         <Nav className="mr-auto">
           <Nav.Link href="/profile">Profile</Nav.Link>
           <Nav.Link href="/group">Group</Nav.Link>
+          <Nav.Link href="/search">Find group</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
