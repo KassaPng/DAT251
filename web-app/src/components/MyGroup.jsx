@@ -5,11 +5,12 @@ import Form from "react-bootstrap/Form";
 import {getSessionCookie} from "../Cookies/Session";
 
 
-class Group extends React.Component {
+class MyGroup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      show: false,
+      showCreateGroup: false,
+      showJoinGroup: false,
       groups: ["placeholder"]
     }
   }
@@ -35,6 +36,12 @@ class Group extends React.Component {
     xhr.send(URL);
   }
 
+  setGroupToJoinName = (name) => {
+    this.setState({
+      groupToJoinName: name
+    });
+  }
+
   setGroupToCreateName = (name) => {
     this.setState({
       groupToCreateName: name
@@ -53,8 +60,21 @@ class Group extends React.Component {
 
     xhr.open('POST', 'http://localhost:8080/groups')
     xhr.setRequestHeader('Content-Type', 'application/json');
-    console.log(" getSessionCookie().email",  getSessionCookie().email);
-    console.log(" getSessionCookie()",  getSessionCookie())
+
+    const jsonString = JSON.stringify( {
+      "groupName": this.state.groupToCreateName,
+      "description": this.state.groupToCreateDescription,
+      "creatorName": getSessionCookie().email,
+
+    })
+    xhr.send(jsonString)
+  }
+
+  sendCreateJoinRequest = () => {
+    const xhr = new XMLHttpRequest()
+
+    xhr.open('POST', 'http://localhost:8080/groups')
+    xhr.setRequestHeader('Content-Type', 'application/json');
 
     const jsonString = JSON.stringify( {
       "groupName": this.state.groupToCreateName,
@@ -86,12 +106,27 @@ class Group extends React.Component {
 
   }
 
-  createGroupPopup = ()=> {
+  createGroupJoinForm = () =>{
+    return(
+        <Form >
+          <Form.Group controlId="formBasicEmail">
+            <Form.Label>Group Name</Form.Label>
+            <Form.Control
+                onChange={(e) => {this.setGroupToJoinName(e.target.value)}}
+            />
+          </Form.Group>
+        </Form>
+    );
+
+  }
+
+
+  createGroupCreatePopup = ()=> {
     return (
         <>
           <Modal
-              show={this.state.show}
-              onHide={ e => {this.handleClose()}}
+              show={this.state.showCreateGroup}
+              onHide={ e => {this.handleCreateGroupClose()}}
               backdrop="static"
               keyboard={false}
           >
@@ -102,7 +137,7 @@ class Group extends React.Component {
               {this.createGroupCreateForm()}
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={ e=> {this.handleClose();}}>
+              <Button variant="secondary" onClick={ e=> {this.handleCreateGroupClose();}}>
                 Close
               </Button>
               <Button variant="primary" onClick={ e=> {this.sendCreateGroupRequest();  this.getGroups();}}>Create</Button>
@@ -112,17 +147,55 @@ class Group extends React.Component {
     );
   }
 
+  createGroupJoinPopup = () => {
+    return (
+        <>
+          <Modal
+              show={this.state.showJoinGroup}
+              onHide={ e => {this.handleJoinGroupClose()}}
+              backdrop="static"
+              keyboard={false}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Join group</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              {this.createGroupJoinForm()}
+            </Modal.Body>
+            <Modal.Footer>
+              <Button variant="secondary" onClick={ e=> {this.handleCreateGroupClose();}}>
+                Close
+              </Button>
+              <Button variant="primary" onClick={ e=> {this.sendCreateJoinRequest();  this.getGroups();}}>Join group</Button>
+            </Modal.Footer>
+          </Modal>
+        </>
+    );
+  }
+
 
   // Create group modal
-  handleClose = () => {
+  handleCreateGroupClose = () => {
     this.setState({
-      show: false
+      showCreateGroup: false
     });
   }
 
-  handleShow = () => {
+  handleCreateGroupShow = () => {
     this.setState({
-      show: true
+      showCreateGroup: true
+    });
+  }
+
+  handleJoinGroupClose = () => {
+    this.setState({
+      showJoinGroup: false
+    });
+  }
+
+  handleJoinGroupShow = () => {
+    this.setState({
+      showJoinGroup: true
     });
   }
 
@@ -170,12 +243,22 @@ class Group extends React.Component {
                   <Button
                       variant="primary"
                       size="sm"
-                      onClick = {e => {this.handleShow()}} // send HTTP request here
+                      onClick = {e => {this.handleCreateGroupShow()}} // send HTTP request here
                   >
                     + New Group
                   </Button>{' '}
-                  {this.createGroupPopup()}
+                  {this.createGroupCreatePopup()}
+
+                  <Button
+                      variant="primary"
+                      size="sm"
+                      onClick = {e => {this.handleJoinGroupShow()}} // send HTTP request here
+                  >
+                    Join Group
+                  </Button>{' '}
+                  {this.createGroupJoinPopup()}
                 </div>
+
                 <br/>
                 {this.renderGroups()}
               </div>
@@ -187,4 +270,4 @@ class Group extends React.Component {
 
 }
 
-export default Group;
+export default MyGroup;
