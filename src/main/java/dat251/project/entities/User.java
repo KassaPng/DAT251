@@ -140,8 +140,9 @@ public class User {
         return abilities;
     }
 
-    public void setAbilities(Map<Group, AbilityValues> abilities) {
-        this.abilities = abilities;
+    public void setAbilities(Group group, String ab, int val) {
+        AbilityValues vals = abilities.get(group);
+        vals.setAbilities(ab, val);
     }
 
     @Override

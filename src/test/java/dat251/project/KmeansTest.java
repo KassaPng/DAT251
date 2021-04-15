@@ -25,14 +25,17 @@ class KmeansTest {
         User espen = new User("espen", "espen", "a");
         User atle = new User("atle", "atle", "a");
         User per = new User("per", "per", "a");
-        users.add(trond);
-        users.add(espen);
-        users.add(atle);
-        users.add(per);
         trond.addGroupToUsersListOfGroups(group);
         espen.addGroupToUsersListOfGroups(group);
         atle.addGroupToUsersListOfGroups(group);
         per.addGroupToUsersListOfGroups(group);
+        trond.setAbilities(group, "Ambition", 10);
+        trond.setAbilities(group, "Work-rate", 10);
+        trond.setAbilities(group, "Knowledge", 10);
+        users.add(trond);
+        users.add(espen);
+        users.add(atle);
+        users.add(per);
     }
 
     @Test
