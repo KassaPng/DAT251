@@ -1,10 +1,21 @@
 package dat251.project.matching;
 
 
+import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Entity
+@Table(name = "abilities")
 public class AbilityValues {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+    @ElementCollection
+    @CollectionTable(name = "ability_value_mapping",
+            joinColumns = {@JoinColumn(name = "ability_id", referencedColumnName = "id")})
+    @MapKeyColumn(name = "ability_name")
+    @Column(name = "value")
     private Map<String, Double> abilities;
 
 
