@@ -55,12 +55,11 @@ public class Kmeans {
                 Centroid closest = closestCentroid(centroids, u);
                 setToCluster(u, closest);
             }
-            boolean done = clusters.equals(lastClusters);
+            boolean done = clusters.equals(lastClusters); //Todo: Equals never true for some reason
             lastClusters = clusters;
             if (i == maxIterations - 1 || done) {
                 break;
             }
-
 
             //update centroids
             ArrayList<Centroid> newCentroids = new ArrayList<>();
@@ -109,7 +108,7 @@ public class Kmeans {
 
 
     private static Centroid calcNewCentroid(Centroid centroid, ArrayList<User> users) {
-        if (users == null) {
+        if (users.isEmpty()) {
             return centroid;
         }
         Map<String, Double> average = centroid.coords;
