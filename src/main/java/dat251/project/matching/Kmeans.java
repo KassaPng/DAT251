@@ -24,7 +24,7 @@ public class Kmeans {
     private static int maxIterations = 1000;
     private static ArrayList<String> abilities;
     private static Group group;
-    private static Map<Centroid, ArrayList<User>> clusters = new HashMap<>();
+    private static Map<Centroid, ArrayList<User>> clusters;
 
     public Kmeans(Group group) {
         this.abilities = group.getAbilities().getAbilities();
@@ -33,7 +33,7 @@ public class Kmeans {
 
 
     public static Map<Centroid, ArrayList<User>> runKmeans(ArrayList<User> users, int k) {
-        //Map<Centroid, ArrayList<User>> clusters = new HashMap<>();
+        clusters = new HashMap<>();
         Map<Centroid, ArrayList<User>> lastClusters = new HashMap<>();
         ArrayList<Centroid> centroids = new ArrayList<>();
 
@@ -64,11 +64,14 @@ public class Kmeans {
 
             //update centroids
             ArrayList<Centroid> newCentroids = new ArrayList<>();
+            Map<Centroid, ArrayList<User>> newClusters = new HashMap<>();
             for (Centroid c : centroids) {
-                newCentroids.add(calcNewCentroid(c, clusters.get(c)));
+                Centroid newC = calcNewCentroid(c, clusters.get(c));
+                newCentroids.add(newC);
+                newClusters.put(newC, new ArrayList<>());
             }
             centroids = newCentroids;
-            clusters = new HashMap<>();
+            clusters = newClusters;
         }
         return lastClusters;
     }
