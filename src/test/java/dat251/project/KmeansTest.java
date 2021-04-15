@@ -32,6 +32,9 @@ class KmeansTest {
         trond.setAbilities(group, "Ambition", 10);
         trond.setAbilities(group, "Work-rate", 10);
         trond.setAbilities(group, "Knowledge", 10);
+        espen.setAbilities(group, "Ambition", 5);
+        espen.setAbilities(group, "Work-rate", 5);
+        espen.setAbilities(group, "Knowledge", 5);
         users.add(trond);
         users.add(espen);
         users.add(atle);
