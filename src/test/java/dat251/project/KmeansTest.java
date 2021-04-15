@@ -39,6 +39,11 @@ class KmeansTest {
     public void checkThatKClustersAreCreated() {
         Kmeans km = new Kmeans(group);
         Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 2);
+
+        for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
+            System.out.println("Key = " + entry.getKey().coords +
+                    ", Value = " + entry.getValue());
+        }
         assertEquals(2, centroids.size());
     }
 
