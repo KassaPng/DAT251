@@ -39,7 +39,7 @@ public class User {
         }
         return groupNames;
     }
-    @Transient
+    @OneToMany
     private Map<Group, AbilityValues> abilities; //The users abilities for each group.
 
     public User() {
@@ -66,11 +66,11 @@ public class User {
         if (group != null && !groups.contains(group)) {
             groups.add(group);
             //create mapping for the group in abilities
-       /*     AbilityValues ab = new AbilityValues();
+            AbilityValues ab = new AbilityValues();
             for(int i = 0; i < group.getAbilities().getAbilities().size(); i++) {
                 ab.setAbilities(group.getAbilities().getAbilities().get(i), 0);
             }
-            abilities.put(group, ab);*/
+            abilities.put(group, ab);
             return true;
         } else {
             return false;

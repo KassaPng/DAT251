@@ -24,6 +24,7 @@ public class Kmeans {
     private static int maxIterations = 1000;
     private static ArrayList<String> abilities;
     private static Group group;
+    private static Map<Centroid, ArrayList<User>> clusters = new HashMap<>();
 
     public Kmeans(Group group) {
         this.abilities = group.getAbilities().getAbilities();
@@ -32,7 +33,7 @@ public class Kmeans {
 
 
     public static Map<Centroid, ArrayList<User>> runKmeans(ArrayList<User> users, int k) {
-        Map<Centroid, ArrayList<User>> clusters = new HashMap<>();
+        //Map<Centroid, ArrayList<User>> clusters = new HashMap<>();
         Map<Centroid, ArrayList<User>> lastClusters = new HashMap<>();
         ArrayList<Centroid> centroids = new ArrayList<>();
 
@@ -42,20 +43,24 @@ public class Kmeans {
             for (String ability : abilities) {
                 randomMap.put(ability, (double) (rand.nextInt(10)));
             }
-            centroids.add(new Centroid(randomMap));
+            Centroid randC = new Centroid(randomMap);
+            centroids.add(randC);
+            clusters.put(randC, new ArrayList<>());
         }
+
 
         for (int i = 0; i < maxIterations; i++) {
             for (User u : users) {
                 //Assign each user to a cluster
                 Centroid closest = closestCentroid(centroids, u);
-                setToCluster(clusters, u, closest);
+                setToCluster(u, closest);
             }
             boolean done = clusters.equals(lastClusters);
             lastClusters = clusters;
             if (i == maxIterations - 1 || done) {
                 break;
             }
+
 
             //update centroids
             ArrayList<Centroid> newCentroids = new ArrayList<>();
@@ -92,7 +97,7 @@ public class Kmeans {
         return closest;
     }
 
-    private static void setToCluster(Map<Centroid, ArrayList<User>> clusters, User user, Centroid centroid) {
+    private static void setToCluster( User user, Centroid centroid) {
         if (clusters.get(centroid) == null) {
             clusters.put(centroid, new ArrayList<>());
         }
