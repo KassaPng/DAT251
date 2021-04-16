@@ -1,10 +1,13 @@
 import React from "react";
 import { getSessionCookie } from "../Cookies/Session.js";
+import {Table, Form, InputGroup, FormControl} from "react-bootstrap";
+import Button from "react-bootstrap/Button";
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      userAbilities : "",
     }
   }
 
@@ -34,7 +37,58 @@ class Profile extends React.Component {
       this.getUserData();
     });
   }
+  addAbility = () => {
+    console.log(this.state.abilityToAdd)
+  }
 
+  renderAbilitySlider = () => {
+    return(
+        <Form>
+          <Form.Group controlId="formBasicRange">
+            <Form.Label>Range</Form.Label>
+            <Form.Control type="range" />
+          </Form.Group>
+        </Form>
+    );
+  }
+
+  renderAbilities = () => {
+    console.log(this.state.searchInput)
+    if (this.state.userAbilities !== "placeholder") {
+      return (
+          <Table  responsive="xl">
+            <thead>
+            <tr>
+              <th >Ability Score </th>
+              <th>Ability name</th>
+
+            </tr>
+            </thead>
+
+            <tbody>
+
+            {
+              Object.entries(this.state.userAbilities).map(([key, ability]) => {
+                  return(
+                      <tr>
+                        {this.renderAbilitySlider()}
+                        <td> </td>
+                        <td>{ability.abilityName}</td>
+
+                      </tr>
+                  );
+              })
+            }
+            </tbody>
+          </Table>
+      );
+    }
+  }
+  updateAbilityToAdd = (event) => {
+    this.setState({
+      abilityToAdd: event.target.value
+    });
+  }
 
   render() {
     return (
@@ -46,6 +100,25 @@ class Profile extends React.Component {
               <p>
                 {this.state.userName}
               </p>
+              <InputGroup className="mb-3">
+                <FormControl
+                    placeholder="Ability name"
+                    aria-label="Ability name"
+                    aria-describedby="basic-addon2"
+                    onChange = {this.updateAbilityToAdd.bind(this) }
+                />
+                <InputGroup.Append>
+                  <Button
+                      variant="outline-secondary"
+                      onClick={ e=> {this.addAbility();}}
+                  >
+                    Add
+                  </Button>
+                </InputGroup.Append>
+              </InputGroup>
+              <div>
+                {this.renderAbilities()}
+              </div>
             </div>
           </div>
         </div>
