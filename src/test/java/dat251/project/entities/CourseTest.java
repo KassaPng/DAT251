@@ -48,35 +48,101 @@ class CourseTest {
         assertEquals(description, course2.getDescription());
     }
 
-
-
     @Test
     void coursesShouldHaveReferencesToAllGroupsRelatedToThatCourse() {
-
-
-      //  course.getRelatedGroups();
-
-
+        assertTrue(course.getRelatedGroups().isEmpty());
+        String group1Name = "Group1";
+        Group group1 = new Group(group1Name, "");
+        assertTrue(course.addGroup(group1));
+        assertEquals(group1, course.getRelatedGroups().get(0));
+        String group2Name = "Group2";
+        Group group2 = new Group(group2Name, "");
+        assertTrue(course.addGroup(group2));
+        assertEquals(2, course.getRelatedGroups().size());
+        assertEquals(group2Name, course.getRelatedGroups().get(1).getGroupName());
     }
 
+    @Test
+    void addingAGroupReferenceThatAlreadyExistsForThatCourseShouldFail() {
+        Group group = new Group("Group", "");
+        assertTrue(course.addGroup(group));
+        assertFalse(course.addGroup(group));
+    }
 
+    @Test
+    void addingAGroupReferenceThatIsNullShouldFail() {
+        assertFalse(course.addGroup(null));
+    }
 
+    @Test
+    void removingARelatedGroupShouldRemoveTheReferenceToThatGroup() {
+        Group group1 = new Group("Group1", "");
+        assertTrue(course.addGroup(group1));
+        Group group2 = new Group("Group2", "");
+        assertTrue(course.addGroup(group2));
+        assertEquals(2, course.getRelatedGroups().size());
+        assertTrue(course.removeGroup(group1));
+        assertEquals(1, course.getRelatedGroups().size());
+        assertEquals(group2, course.getRelatedGroups().get(0));
+        assertTrue(course.removeGroup(group2));
+        assertTrue(course.getRelatedGroups().isEmpty());
+    }
 
+    @Test
+    void removingAGroupThatTheCourseIsNotReferencingShouldFail() {
+        Group group = new Group("Group", "");
+        assertFalse(course.getRelatedGroups().contains(group));
+        assertFalse(course.removeGroup(group));
+    }
 
+    @Test
+    void coursesShouldHaveReferencesToAllUsersRelatedToThatCourse() {
+        User user1 = new User("Name1", "test1", "Password");
+        assertTrue(course.addUser(user1));
+        assertEquals(user1, course.getRelatedUsers().get(0));
+        User user2 = new User("Name2", "test2", "Password");
+        assertTrue(course.addUser(user2));
+        assertEquals(2, course.getRelatedUsers().size());
+        assertEquals(user1, course.getRelatedUsers().get(0));
+        assertEquals(user2, course.getRelatedUsers().get(1));
+    }
 
+    @Test
+    void addingAUserReferenceThatAlreadyExistsForThatCourseShouldFail() {
+        User user = new User("Name", "test", "Password");
+        assertTrue(course.addUser(user));
+        assertFalse(course.addUser(user));
+    }
+
+    @Test
+    void addingAUserReferenceThatIsNullShouldFail() {
+        assertFalse(course.addUser(null));
+    }
+
+    @Test
+    void removingARelatedUserShouldRemoveTheReferenceToThatUser() {
+        User user1 = new User("Name1", "test1", "Password");
+        assertTrue(course.addUser(user1));
+        User user2 = new User("Name2", "test2", "Password");
+        assertTrue(course.addUser(user2));
+        assertEquals(2, course.getRelatedUsers().size());
+        assertTrue(course.removeUser(user1));
+        assertEquals(1, course.getRelatedUsers().size());
+        assertEquals(user2, course.getRelatedUsers().get(0));
+        assertTrue(course.removeUser(user2));
+        assertTrue(course.getRelatedUsers().isEmpty());
+    }
+
+    @Test
+    void removingAUserThatTheCourseIsNotReferencingShouldFail() {
+        User user = new User("Name", "test", "Password");
+        assertFalse(course.getRelatedUsers().contains(user));
+        assertFalse(course.removeUser(user));
+    }
 
 
 
 /*
-
- @Test
-    void a() {
-
-    }
-    @Test
-    void a() {
-
-    }
     @Test
     void a() {
 
