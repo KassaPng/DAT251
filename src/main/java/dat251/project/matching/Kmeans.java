@@ -32,6 +32,32 @@ public class Kmeans {
         this.course = course;
     }
 
+    /**
+     *
+     * @param user The user to be placed in a group
+     * @return The group with the closest matching for this user
+     * @throws NullPointerException if list of groups in course is empty
+     */
+    public static Group findClosestGroup(User user) throws NullPointerException {
+        if(course.getRelatedGroups().isEmpty()) {
+            throw new NullPointerException("No groups registered for this course");
+        }
+        Map<String, Double> abMap = new HashMap<>();
+        for(String ab : abilities) {
+            abMap.put(ab, 0.0);
+        }
+        Group closestGroup = null;
+        double minDist = Double.MAX_VALUE;
+        for(Group group : course.getRelatedGroups()) {
+            Centroid centroid = new Centroid(abMap);
+            centroid = calcNewCentroid(centroid, (ArrayList<User>) group.getMembers());
+            if(distance(centroid.coords, user.getAbilities(course)) < minDist) {
+                closestGroup = group;
+            }
+        }
+        return closestGroup;
+    }
+
 
     public static Map<Centroid, ArrayList<User>> runKmeans(ArrayList<User> users, int k) {
         clusters = new HashMap<>();
