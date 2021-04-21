@@ -3,7 +3,6 @@ package dat251.project;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 import dat251.project.matching.Kmeans;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
