@@ -46,7 +46,7 @@ public class AbilityList {
         return abList;
     }
 
-    public ArrayList<String> getAbilities() {
+    public ArrayList<String> getListOfAbilities() {
         return abilities;
     }
 
