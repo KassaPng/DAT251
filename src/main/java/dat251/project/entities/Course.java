@@ -128,6 +128,10 @@ public class Course {
         return relatedUsers;
     }
 
+    public ArrayList<String> getAbilities() {
+        return listOfAbilities.getListOfAbilities();
+    }
+
     public void setRelatedUsers(List<User> relatedUsers) {
         this.relatedUsers = relatedUsers;
     }

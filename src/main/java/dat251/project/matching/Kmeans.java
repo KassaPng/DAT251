@@ -27,7 +27,7 @@ public class Kmeans {
     private static Map<Centroid, ArrayList<User>> clusters;
 
     public Kmeans(Group group) {
-        this.abilities = group.getAbilities().getAbilities();
+        this.abilities = group.getAbilities().getListOfAbilities();
         this.group = group;
     }
 

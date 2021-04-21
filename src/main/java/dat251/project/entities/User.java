@@ -28,6 +28,7 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Group> groups;
+    private List<Course> courses;
 
 
     // Construct the object to be included in the JSON response instead of groups
@@ -40,7 +41,7 @@ public class User {
         return groupNames;
     }
     @OneToMany
-    private Map<Group, AbilityValues> abilities; //The users abilities for each group.
+    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
 
     public User() {
 
@@ -58,6 +59,18 @@ public class User {
 
     }
 
+    public void addCourseToUsersListOfCourses(Course course) {
+        if(course != null && !courses.contains(course)) {
+            courses.add(course);
+        }
+        //create mapping for the group in abilities
+        AbilityValues ab = new AbilityValues();
+        for(String ability : course.getAbilities()) {
+            ab.setAbilities(ability, 0);
+        }
+        abilities.put(course, ab);
+    }
+
     public boolean verifyPassword(String keyPhrase) {
         return Credentials.passwordsMatch(keyPhrase, this.passwordAsHash);
     }
@@ -65,12 +78,6 @@ public class User {
     public boolean addGroupToUsersListOfGroups(Group group) {
         if (group != null && !groups.contains(group)) {
             groups.add(group);
-            //create mapping for the group in abilities
-            AbilityValues ab = new AbilityValues();
-            for(int i = 0; i < group.getAbilities().getAbilities().size(); i++) {
-                ab.setAbilities(group.getAbilities().getAbilities().get(i), 0);
-            }
-            abilities.put(group, ab);
             return true;
         } else {
             return false;
@@ -136,7 +143,7 @@ public class User {
         this.groups = groups;
     }
 
-    public Map<Group, AbilityValues> getAbilities() {
+    public Map<Course, AbilityValues> getAbilities() {
         return abilities;
     }
 
