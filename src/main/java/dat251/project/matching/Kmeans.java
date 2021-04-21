@@ -1,5 +1,6 @@
 package dat251.project.matching;
 
+import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 
@@ -23,12 +24,12 @@ public class Kmeans {
     private static Random rand = new Random(5);//TODO: remove seed after testing
     private static int maxIterations = 1000;
     private static ArrayList<String> abilities;
-    private static Group group;
+    private static Course course;
     private static Map<Centroid, ArrayList<User>> clusters;
 
-    public Kmeans(Group group) {
-        this.abilities = group.getAbilities().getListOfAbilities();
-        this.group = group;
+    public Kmeans(Course course) {
+        this.abilities = course.getAbilities();
+        this.course = course;
     }
 
 
@@ -90,7 +91,7 @@ public class Kmeans {
         double minDist = Double.MAX_VALUE;
         Centroid closest = null;
         for (Centroid centroid : centroids) {
-            double dist = distance(centroid.coords, user.getAbilities(group));
+            double dist = distance(centroid.coords, user.getAbilities(course));
             if (dist < minDist) {
                 minDist = dist;
                 closest = centroid;
@@ -118,7 +119,7 @@ public class Kmeans {
         for (User u : users) {
             for (String ab : abilities) {
                 double current = average.get(ab);
-                centroid.coords.put(ab, current + u.getAbilities(group).get(ab)); //increment average values by user values
+                centroid.coords.put(ab, current + u.getAbilities(course).get(ab)); //increment average values by user values
             }
         }
         for (String ab : abilities) {

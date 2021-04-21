@@ -55,6 +55,7 @@ public class User {
         this.userName = userName;
         setPasswordAsHash(password);
         this.groups = new ArrayList<>();
+        this.courses = new ArrayList<>();
         this.abilities = new HashMap<>();
 
     }
@@ -63,7 +64,7 @@ public class User {
         if(course != null && !courses.contains(course)) {
             courses.add(course);
         }
-        //create mapping for the group in abilities
+        //create mapping for the course in abilities
         AbilityValues ab = new AbilityValues();
         for(String ability : course.getAbilities()) {
             ab.setAbilities(ability, 0);
@@ -93,11 +94,11 @@ public class User {
             return false;
         }
     }
-    public Map<String, Double> getAbilities(Group group) throws IllegalArgumentException {
-        if(!abilities.containsKey(group)) {
+    public Map<String, Double> getAbilities(Course course) throws IllegalArgumentException {
+        if(!abilities.containsKey(course)) {
             throw new IllegalArgumentException("group does not exist");
         }
-        return abilities.get(group).getAbilityValues();
+        return abilities.get(course).getAbilityValues();
     }
 
     public long getId() {
@@ -143,12 +144,9 @@ public class User {
         this.groups = groups;
     }
 
-    public Map<Course, AbilityValues> getAbilities() {
-        return abilities;
-    }
 
-    public void setAbilities(Group group, String ab, int val) {
-        AbilityValues vals = abilities.get(group);
+    public void setAbilities(Course course, String ab, int val) {
+        AbilityValues vals = abilities.get(course);
         vals.setAbilities(ab, val);
     }
 
