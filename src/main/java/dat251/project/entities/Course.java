@@ -1,5 +1,7 @@
 package dat251.project.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import dat251.project.matching.AbilityList;
 
 import javax.persistence.*;
@@ -22,12 +24,34 @@ public class Course {
     private String name;
     private String institutionName; // Name of educational institution where the course is taught.
     private String description;
-    
+
+    @JsonIgnore
     @ManyToMany
     private List<Group> relatedGroups;
 
+    @JsonIgnore
     @ManyToMany
     private List<User> relatedUsers;
+
+    // Construct the object to be included in the JSON response instead of related groups
+    @JsonProperty("relatedGroups")
+    public List<String> getGroupsAsJsonString() {
+        List<String> groupNames = new ArrayList<>();
+        for (Group group : relatedGroups) {
+            groupNames.add(group.getGroupName());
+        }
+        return groupNames;
+    }
+
+    // Construct the object to be included in the JSON response instead of related users
+    @JsonProperty("relatedUsers")
+    public List<String> getUsersAsJsonString() {
+        List<String> userNames = new ArrayList<>();
+        for (User user : relatedUsers) {
+            userNames.add(user.getUserName());
+        }
+        return userNames;
+    }
 
     public Course() {}
 
