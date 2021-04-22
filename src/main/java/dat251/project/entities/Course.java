@@ -22,7 +22,7 @@ public class Course {
     private String name;
     private String institutionName; // Name of educational institution where the course is taught.
     private String description;
-
+    
     @ManyToMany
     private List<Group> relatedGroups;
 
@@ -135,5 +135,37 @@ public class Course {
 
     public void setAbilities(AbilityList listOfAbilities) {
         this.listOfAbilities = listOfAbilities;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", institutionName='" + institutionName + '\'' +
+                ", description='" + description + '\'' +
+                ", relatedGroups=" + printListContents(relatedGroups) +
+                ", relatedUsers=" + printListContents(relatedUsers) +
+                '}';
+    }
+
+    private String printListContents(List<?> array) {
+        if (array.isEmpty()) {
+            return "[]";
+        }
+        StringBuilder out = new StringBuilder("[ ");
+        for (Object obj : array) {
+            if (obj instanceof User) {
+                out.append(((User) obj).getUserName());
+            } else if (obj instanceof Group) {
+                out.append(((Group) obj).getGroupName());
+            } else {
+                throw new IllegalArgumentException("Array content not recognized");
+            }
+            out.append(", ");
+        }
+        out.deleteCharAt(out.length() - 2);
+        out.append("]");
+        return out.toString();
     }
 }
