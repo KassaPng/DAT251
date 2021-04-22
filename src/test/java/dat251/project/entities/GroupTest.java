@@ -12,6 +12,7 @@ class GroupTest {
     private Group group;
     private User user;
     private User user2;
+    private Course course;
 
     @BeforeEach
     void setUp() {
@@ -26,6 +27,7 @@ class GroupTest {
         userName = "user2@something.com";
         password = "Password346352345";
         user2 = new User(name, userName, password);
+        course = new Course("Name", "UiB", "Description");
     }
 
     @Test
@@ -121,4 +123,40 @@ class GroupTest {
         assertEquals(groupWithTwoMembersAndTwoCourses, group.toString());
     }
 
+    @Test
+    void addingAReferenceToACourseShouldRegisterThatReference() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertEquals(course, group.getCourses().get(0));
+    }
+
+    @Test
+    void addingAReferenceToACourseAlreadyPresentShouldFail() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertFalse(group.addReferenceToCourse(course));
+        assertEquals(1, group.getCourses().size());
+        assertEquals(course, group.getCourses().get(0));
+    }
+
+    @Test
+    void addingANullReferenceToACourseShouldFail() {
+        assertFalse(group.addReferenceToCourse(null));
+    }
+
+    @Test
+    void removingAReferenceToACourseShouldDeRegisterThatCourse() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertEquals(1, group.getCourses().size());
+        assertEquals(course, group.getCourses().get(0));
+        assertTrue(group.removeReferenceToCourse(course));
+        assertTrue(group.getCourses().isEmpty());
+    }
+
+    @Test
+    void removingAReferenceToACourseThatIsNotRegisteredForTheGroupShouldDoNothing() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertEquals(1, group.getCourses().size());
+        Course course2 = new Course("Name2", "HVL", "Description");
+        assertFalse(group.removeReferenceToCourse(course2));
+        assertEquals(course, group.getCourses().get(0));
+    }
 }
