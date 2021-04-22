@@ -343,6 +343,49 @@ public class Controller {
         }
     }
 
+    @PutMapping("/courses/{courseID}")
+    public @ResponseBody Course updateCourse(@PathVariable long courseID,
+                                             @RequestBody Map<String, String> json) {
+        log.info("Attempting to alter course with ID: {}", courseID);
+        Course course = courseRepository.findById(courseID);
+        if (notExistsInDatabase(course, COURSE)) {
+            return null;
+        }
+        String newCourseName = "" + json.get("newCourseName");
+        String newEducationalInstitution = "" + json.get("newInstitution");
+        String newDescription = "" + json.get("newDescription");
+        updateCourseName(course, newCourseName);
+        updateCourseInstitution(course, newEducationalInstitution);
+        updateCourseDescription(course, newDescription);
+        log.info("Successfully updated the course information");
+        return course;
+    }
+
+    private void updateCourseDescription(Course course, String newDescription) {
+        if (!newDescription.isEmpty() && !newDescription.equals("null")) {
+            course.setDescription(newDescription);
+            courseRepository.save(course);
+            log.info("Updated course description to: {}", newDescription);
+        }
+    }
+
+    private void updateCourseInstitution(Course course, String newEducationalInstitution) {
+        if (!newEducationalInstitution.isEmpty() && !newEducationalInstitution.equals("null")) {
+            course.setInstitutionName(newEducationalInstitution);
+            courseRepository.save(course);
+            log.info("Updated course educational institution to: {}", newEducationalInstitution);
+        }
+    }
+
+    private void updateCourseName(Course course, String newCourseName) {
+        if (newCourseName.length() >= Course.MINIMUM_COURSE_NAME_LENGTH && !newCourseName.equals("null")
+                && courseRepository.findByName(newCourseName) == null) {
+            course.setName(newCourseName);
+            courseRepository.save(course);
+            log.info("Updated course name to: {}", newCourseName);
+        }
+    }
+
     @GetMapping("/courses")
     public @ResponseBody Iterable<Course> getAllCourses() {
         log.info("Getting all registered courses");
