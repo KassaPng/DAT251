@@ -314,6 +314,45 @@ public class Controller {
         return user.getGroups();
     }
 
+/*
+    COURSE REQUESTS
+*/
+
+    @GetMapping("/courses")
+    public @ResponseBody Iterable<Course> getCourses() {
+        log.info("Getting all registered courses");
+        return courseRepository.findAll();
+    }
+
+    @GetMapping("/courses/{courseID}")
+    public @ResponseBody Course getCourse(@PathVariable long courseID) {
+        log.info("Trying to find a specific course with id: {}", courseID);
+        Course course = courseRepository.findById(courseID);
+        if (notExistsInDatabase(course, "Course")) {
+            return null;
+        } else {
+            log.info("Successfully retrieved course: {} with ID: {}", course.getName(), course.getId());
+            return course;
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
