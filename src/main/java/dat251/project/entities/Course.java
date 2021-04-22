@@ -22,6 +22,7 @@ public class Course {
 
     @Id
     private long id;
+    @Column(unique = true)
     private String name;
     private String institutionName; // Name of educational institution where the course is taught.
     private String description;

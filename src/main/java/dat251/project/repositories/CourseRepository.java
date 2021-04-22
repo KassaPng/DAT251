@@ -9,6 +9,6 @@ public interface CourseRepository extends CrudRepository<Course, String> {
 
     Course findById(long id);
 
-    List<Course> findByName(String courseName);
+    Course findByName(String courseName);
 
 }
