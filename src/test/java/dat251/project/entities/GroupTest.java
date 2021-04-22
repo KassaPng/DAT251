@@ -12,6 +12,7 @@ class GroupTest {
     private Group group;
     private User user;
     private User user2;
+    private Course course;
 
     @BeforeEach
     void setUp() {
@@ -26,6 +27,7 @@ class GroupTest {
         userName = "user2@something.com";
         password = "Password346352345";
         user2 = new User(name, userName, password);
+        course = new Course("Name", "UiB", "Description");
     }
 
     @Test
@@ -87,28 +89,74 @@ class GroupTest {
     @Test
     void aGroupShouldBeCorrectlyRepresentedAsAString() {
         group.getMembers().clear();
-        String noMembers = "[]";
+        String emptyArray = "[]";
         String groupAsString = "Group[Id='" + group.getId() + "', "
                 + "groupName='" + group.getGroupName() + "', "
-                + "description='" + group.getDescription() + "', "
-                + "members='" + noMembers + "']";
-        assertEquals(groupAsString, group.toString());
-        group.addUserToGroup(user);
+                + "description='" + group.getDescription() + "', ";
+        String groupWithNoMembersAndCourses = groupAsString +
+                "members='" + emptyArray + "', " +
+                "courses='" + emptyArray + "']";
+        assertEquals(groupWithNoMembersAndCourses, group.toString());
+
+        assertTrue(group.addUserToGroup(user));
         String oneMember = "[ " + group.getMembers().get(0).getUserName() + " ]";
-        groupAsString = "Group[Id='" + group.getId() + "', "
-                + "groupName='" + group.getGroupName() + "', "
-                + "description='" + group.getDescription() + "', "
-                + "members='" + oneMember + "']";
-        assertEquals(groupAsString, group.toString());
-        group.addUserToGroup(user2);
+        Course course1 = new Course("Name1", "UiB", "description");
+        assertTrue(group.addReferenceToCourse(course1));
+        String oneCourse = "[ " + group.getCourses().get(0).getName() + " ]";
+        String groupWithOneMemberAndOneCourse = groupAsString +
+                "members='" + oneMember + "', " +
+                "courses='" + oneCourse + "']";
+        assertEquals(groupWithOneMemberAndOneCourse, group.toString());
+
+        assertTrue(group.addUserToGroup(user2));
         String twoMembers = "[ "
                 + group.getMembers().get(0).getUserName() + ", "
                 + group.getMembers().get(1).getUserName() + " ]";
-        groupAsString = "Group[Id='" + group.getId() + "', "
-                + "groupName='" + group.getGroupName() + "', "
-                + "description='" + group.getDescription() + "', "
-                + "members='" + twoMembers + "']";
-        assertEquals(groupAsString, group.toString());
+        Course course2 = new Course("Name2", "HVL", "description");
+        assertTrue(group.addReferenceToCourse(course2));
+        String twoCourses = "[ " +
+                group.getCourses().get(0).getName() + ", " +
+                group.getCourses().get(1).getName() + " ]";
+        String groupWithTwoMembersAndTwoCourses = groupAsString +
+                "members='" + twoMembers + "', " +
+                "courses='" + twoCourses + "']";
+        assertEquals(groupWithTwoMembersAndTwoCourses, group.toString());
     }
 
+    @Test
+    void addingAReferenceToACourseShouldRegisterThatReference() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertEquals(course, group.getCourses().get(0));
+    }
+
+    @Test
+    void addingAReferenceToACourseAlreadyPresentShouldFail() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertFalse(group.addReferenceToCourse(course));
+        assertEquals(1, group.getCourses().size());
+        assertEquals(course, group.getCourses().get(0));
+    }
+
+    @Test
+    void addingANullReferenceToACourseShouldFail() {
+        assertFalse(group.addReferenceToCourse(null));
+    }
+
+    @Test
+    void removingAReferenceToACourseShouldDeRegisterThatCourse() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertEquals(1, group.getCourses().size());
+        assertEquals(course, group.getCourses().get(0));
+        assertTrue(group.removeReferenceToCourse(course));
+        assertTrue(group.getCourses().isEmpty());
+    }
+
+    @Test
+    void removingAReferenceToACourseThatIsNotRegisteredForTheGroupShouldDoNothing() {
+        assertTrue(group.addReferenceToCourse(course));
+        assertEquals(1, group.getCourses().size());
+        Course course2 = new Course("Name2", "HVL", "Description");
+        assertFalse(group.removeReferenceToCourse(course2));
+        assertEquals(course, group.getCourses().get(0));
+    }
 }

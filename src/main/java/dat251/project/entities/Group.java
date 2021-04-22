@@ -83,6 +83,24 @@ public class Group {
         }
     }
 
+    public boolean addReferenceToCourse(Course course) {
+        if (course != null && !courses.contains(course)) {
+            courses.add(course);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean removeReferenceToCourse(Course course) {
+        if (course != null && courses.contains(course)) {
+            courses.remove(course);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public long getId() {
         return id;
     }
@@ -141,8 +159,10 @@ public class Group {
                 "Group[Id='%d', " +
                         "groupName='%s', " +
                         "description='%s', " +
-                        "members='%s']",
-                id, groupName, description, EntityUtilities.printListContents(members)
+                        "members='%s', " +
+                        "courses='%s']",
+                id, groupName, description, EntityUtilities.printListContents(members),
+                EntityUtilities.printListContents(courses)
         );
     }
 }
