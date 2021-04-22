@@ -122,10 +122,10 @@ public class User {
     }
 
     public void setPasswordAsHash(String passwordAsHash) {
-        long start = System.currentTimeMillis();
+      //  long start = System.currentTimeMillis();
         this.passwordAsHash = Credentials.encodePassword(passwordAsHash);
-        long stop = System.currentTimeMillis();
-        System.out.println("Encryption took: " + (stop - start) + " microseconds");
+      //  long stop = System.currentTimeMillis();
+       // System.out.println("Encryption took: " + (stop - start) + " microseconds");
     }
 
     public List<Group> getGroups() {
