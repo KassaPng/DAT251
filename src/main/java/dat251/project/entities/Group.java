@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityList;
 
 import javax.persistence.*;
@@ -141,20 +142,7 @@ public class Group {
                         "groupName='%s', " +
                         "description='%s', " +
                         "members='%s']",
-                id, groupName, description, printMembers()
+                id, groupName, description, EntityUtilities.printListContents(members)
         );
-    }
-
-    private String printMembers() {
-        if (members.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder out = new StringBuilder("[ ");
-        for (User user : members) {
-            out.append(user.getUserName()).append(", ");
-        }
-        out.deleteCharAt(out.length() - 2);
-        out.append("]");
-        return out.toString();
     }
 }

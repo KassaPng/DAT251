@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityValues;
 import dat251.project.security.Credentials;
 
@@ -73,16 +74,18 @@ public class User {
 
     }
 
-    public void addCourseToUsersListOfCourses(Course course) {
+    public boolean addCourseToUsersListOfCourses(Course course) {
         if(course != null && !courses.contains(course)) {
             courses.add(course);
+            //create mapping for the course in abilities
+            AbilityValues ab = new AbilityValues();
+            for(String ability : course.getAbilities()) {
+                ab.setAbilities(ability, 0);
+            }
+            abilities.put(course, ab);
+            return true;
         }
-        //create mapping for the course in abilities
-        AbilityValues ab = new AbilityValues();
-        for(String ability : course.getAbilities()) {
-            ab.setAbilities(ability, 0);
-        }
-        abilities.put(course, ab);
+        return false;
     }
 
     public boolean verifyPassword(String keyPhrase) {
@@ -180,23 +183,10 @@ public class User {
                 "User[Id='%d', " +
                         "name='%s', " +
                         "userName='%s', " +
-                        "groups='%s']",
-                id, name, userName, printGroups()
+                        "groups='%s', " +
+                        "courses='%s']",
+                id, name, userName, EntityUtilities.printListContents(groups),
+                EntityUtilities.printListContents(courses)
         );
     }
-
-    private String printGroups() {
-        if (groups.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder out = new StringBuilder("[ ");
-        for (Group group : groups) {
-            out.append(group.getGroupName()).append(", ");
-        }
-        out.deleteCharAt(out.length() - 2);
-        out.append("]");
-        return out.toString();
-    }
-
-
 }

@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityList;
 
 import javax.persistence.*;
@@ -168,28 +169,8 @@ public class Course {
                 ", name='" + name + '\'' +
                 ", institutionName='" + institutionName + '\'' +
                 ", description='" + description + '\'' +
-                ", relatedGroups=" + printListContents(relatedGroups) +
-                ", relatedUsers=" + printListContents(relatedUsers) +
+                ", relatedGroups=" + EntityUtilities.printListContents(relatedGroups) +
+                ", relatedUsers=" + EntityUtilities.printListContents(relatedUsers) +
                 '}';
-    }
-
-    private String printListContents(List<?> array) {
-        if (array.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder out = new StringBuilder("[ ");
-        for (Object obj : array) {
-            if (obj instanceof User) {
-                out.append(((User) obj).getUserName());
-            } else if (obj instanceof Group) {
-                out.append(((Group) obj).getGroupName());
-            } else {
-                throw new IllegalArgumentException("Array content not recognized");
-            }
-            out.append(", ");
-        }
-        out.deleteCharAt(out.length() - 2);
-        out.append("]");
-        return out.toString();
     }
 }
