@@ -4,10 +4,7 @@ import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class Kmeans {
 
@@ -22,7 +19,7 @@ public class Kmeans {
 
     private static Random rand = new Random(5);//TODO: remove seed after testing
     private static int maxIterations = 1000;
-    private static ArrayList<String> abilities;
+    private static List<String> abilities;
     private static Course course;
     private static Map<Centroid, ArrayList<User>> clusters;
 

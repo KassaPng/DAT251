@@ -140,13 +140,31 @@ class CourseTest {
         assertFalse(course.removeUser(user));
     }
 
+    @Test
+    void aCourseShouldBeCorrectlyRepresentedAsAString() {
+        String emptyArray = "[]";
+        String courseAsAString = "Course{" +
+                "id=" + course.getId() +
+                ", name='" + course.getName() + '\'' +
+                ", institutionName='" + course.getInstitutionName() + '\'' +
+                ", description='" + course.getDescription() + '\'';
+        String courseWithNoRelatedGroupsAndUsers = courseAsAString +
+                ", relatedGroups=" + emptyArray +
+                ", relatedUsers=" + emptyArray + "}";
+        assertEquals(courseWithNoRelatedGroupsAndUsers, course.toString());
+        Group group1 = new Group("Name", "description");
+        User user1 = new User("Name", "UserName", "Password");
+        assertTrue(course.addGroup(group1));
+        assertTrue(course.addUser(user1));
+        String courseWithOneRelatedGroupAndOneRelatedUser = courseAsAString +
+                ", relatedGroups=" + "[ " + group1.getGroupName() + " ]" +
+                ", relatedUsers=" + "[ " + user1.getUserName() + " ]" + "}";
+        assertEquals(courseWithOneRelatedGroupAndOneRelatedUser, course.toString());
+    }
 
 
 /*
-    @Test
-    void a() {
 
-    }
     @Test
     void a() {
 

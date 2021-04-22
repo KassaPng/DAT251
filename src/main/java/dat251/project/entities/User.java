@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityValues;
 import dat251.project.security.Credentials;
 
@@ -28,8 +29,13 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Group> groups;
+
+    @JsonIgnore
+    @ManyToMany
     private List<Course> courses;
 
+    @OneToMany
+    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
 
     // Construct the object to be included in the JSON response instead of groups
     @JsonProperty("groups")
@@ -40,8 +46,16 @@ public class User {
         }
         return groupNames;
     }
-    @OneToMany
-    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
+
+    // Construct the object to be included in the JSON response instead of courses
+    @JsonProperty("courses")
+    public List<String> getCoursesAsJsonString() {
+        List<String> courseNames = new ArrayList<>();
+        for (Course course : courses) {
+            courseNames.add(course.getName());
+        }
+        return courseNames;
+    }
 
     public User() {
 
@@ -60,16 +74,18 @@ public class User {
 
     }
 
-    public void addCourseToUsersListOfCourses(Course course) {
+    public boolean addCourseToUsersListOfCourses(Course course) {
         if(course != null && !courses.contains(course)) {
             courses.add(course);
+            //create mapping for the course in abilities
+            AbilityValues ab = new AbilityValues();
+            for(String ability : course.getAbilities()) {
+                ab.setAbilities(ability, 0);
+            }
+            abilities.put(course, ab);
+            return true;
         }
-        //create mapping for the course in abilities
-        AbilityValues ab = new AbilityValues();
-        for(String ability : course.getAbilities()) {
-            ab.setAbilities(ability, 0);
-        }
-        abilities.put(course, ab);
+        return false;
     }
 
     public boolean verifyPassword(String keyPhrase) {
@@ -130,10 +146,10 @@ public class User {
     }
 
     public void setPasswordAsHash(String passwordAsHash) {
-        long start = System.currentTimeMillis();
+      //  long start = System.currentTimeMillis();
         this.passwordAsHash = Credentials.encodePassword(passwordAsHash);
-        long stop = System.currentTimeMillis();
-        System.out.println("Encryption took: " + (stop - start) + " microseconds");
+      //  long stop = System.currentTimeMillis();
+       // System.out.println("Encryption took: " + (stop - start) + " microseconds");
     }
 
     public List<Group> getGroups() {
@@ -144,10 +160,21 @@ public class User {
         this.groups = groups;
     }
 
-
     public void setAbilities(Course course, String ab, int val) {
-        AbilityValues vals = abilities.get(course);
-        vals.setAbilities(ab, val);
+        AbilityValues abilityValues = abilities.get(course);
+        abilityValues.setAbilities(ab, val);
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public Map<Course, AbilityValues> getAbilities() {
+        return abilities;
     }
 
     @Override
@@ -156,23 +183,10 @@ public class User {
                 "User[Id='%d', " +
                         "name='%s', " +
                         "userName='%s', " +
-                        "groups='%s']",
-                id, name, userName, printGroups()
+                        "groups='%s', " +
+                        "courses='%s']",
+                id, name, userName, EntityUtilities.printListContents(groups),
+                EntityUtilities.printListContents(courses)
         );
     }
-
-    private String printGroups() {
-        if (groups.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder out = new StringBuilder("[ ");
-        for (Group group : groups) {
-            out.append(group.getGroupName()).append(", ");
-        }
-        out.deleteCharAt(out.length() - 2);
-        out.append("]");
-        return out.toString();
-    }
-
-
 }

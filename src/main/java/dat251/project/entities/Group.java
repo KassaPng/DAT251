@@ -2,6 +2,7 @@ package dat251.project.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityList;
 
 import javax.persistence.*;
@@ -25,6 +26,10 @@ public class Group {
     @ManyToMany
     private List<User> members;
 
+    @JsonIgnore
+    @ManyToMany
+    private List<Course> courses;
+
     // Construct the object to be included in the JSON response instead of members
     @JsonProperty("members")
     public List<String> getMembersAsJsonString() {
@@ -33,6 +38,16 @@ public class Group {
             memberNames.add(member.getName());
         }
         return memberNames;
+    }
+
+    // Construct the object to be included in the JSON response instead of courses
+    @JsonProperty("courses")
+    public List<String> getCoursesAsJsonString() {
+        List<String> courseNames = new ArrayList<>();
+        for (Course course : courses) {
+            courseNames.add(course.getName());
+        }
+        return courseNames;
     }
 
     public Group() {
@@ -46,6 +61,7 @@ public class Group {
         this.groupName = groupName;
         this.description = description;
         this.members = new ArrayList<>();
+        this.courses = new ArrayList<>();
         this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
     }
 
@@ -107,6 +123,18 @@ public class Group {
         this.listOfAbilities = listOfAbilities;
     }
 
+    public AbilityList getListOfAbilities() {
+        return listOfAbilities;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -114,20 +142,7 @@ public class Group {
                         "groupName='%s', " +
                         "description='%s', " +
                         "members='%s']",
-                id, groupName, description, printMembers()
+                id, groupName, description, EntityUtilities.printListContents(members)
         );
-    }
-
-    private String printMembers() {
-        if (members.isEmpty()) {
-            return "[]";
-        }
-        StringBuilder out = new StringBuilder("[ ");
-        for (User user : members) {
-            out.append(user.getUserName()).append(", ");
-        }
-        out.deleteCharAt(out.length() - 2);
-        out.append("]");
-        return out.toString();
     }
 }
