@@ -29,7 +29,6 @@ public class Course {
     @ManyToMany
     private List<User> relatedUsers;
 
-
     public Course() {}
 
     public Course(String courseName, String nameOfInstitutionTeachingThisCourse, String description) {
@@ -82,8 +81,6 @@ public class Course {
         }
     }
 
-
-
     public long getId() {
         return id;
     }
@@ -128,11 +125,15 @@ public class Course {
         return relatedUsers;
     }
 
-    public ArrayList<String> getAbilities() {
+    public void setRelatedUsers(List<User> relatedUsers) {
+        this.relatedUsers = relatedUsers;
+    }
+
+    public List<String> getAbilities() {
         return listOfAbilities.getListOfAbilities();
     }
 
-    public void setRelatedUsers(List<User> relatedUsers) {
-        this.relatedUsers = relatedUsers;
+    public void setAbilities(AbilityList listOfAbilities) {
+        this.listOfAbilities = listOfAbilities;
     }
 }

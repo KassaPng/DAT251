@@ -28,6 +28,7 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Group> groups;
+    @ManyToMany
     private List<Course> courses;
 
 
