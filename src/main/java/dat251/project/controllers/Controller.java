@@ -1,7 +1,9 @@
 package dat251.project.controllers;
 
+import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
+import dat251.project.repositories.CourseRepository;
 import dat251.project.repositories.GroupRepository;
 import dat251.project.repositories.UserRepository;
 import org.slf4j.Logger;
@@ -18,12 +20,15 @@ public class Controller {
     private static final Logger log = LoggerFactory.getLogger(Controller.class);
     final UserRepository userRepository;
     final GroupRepository groupRepository;
+    final CourseRepository courseRepository;
 
     @Autowired
     public Controller(UserRepository userRepository,
-                      GroupRepository groupRepository) {
+                      GroupRepository groupRepository,
+                      CourseRepository courseRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
+        this.courseRepository = courseRepository;
     }
 
 /*
