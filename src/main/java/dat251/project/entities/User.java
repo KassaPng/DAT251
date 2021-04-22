@@ -28,9 +28,13 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Group> groups;
+
+    @JsonIgnore
     @ManyToMany
     private List<Course> courses;
-
+    
+    @OneToMany
+    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
 
     // Construct the object to be included in the JSON response instead of groups
     @JsonProperty("groups")
@@ -41,8 +45,16 @@ public class User {
         }
         return groupNames;
     }
-    @OneToMany
-    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
+
+    // Construct the object to be included in the JSON response instead of courses
+    @JsonProperty("courses")
+    public List<String> getCoursesAsJsonString() {
+        List<String> courseNames = new ArrayList<>();
+        for (Course course : courses) {
+            courseNames.add(course.getName());
+        }
+        return courseNames;
+    }
 
     public User() {
 
