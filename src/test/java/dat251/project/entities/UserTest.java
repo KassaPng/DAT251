@@ -98,33 +98,40 @@ class UserTest {
 
     @Test
     void aUserShouldBeRepresentedWithTheCorrectFormatAsAString() {
-        String emptyGroup = "[]";
+        String emptyArray = "[]";
         String userAsString = "User[Id='" + user.getId()
                 + "', name='" + user.getName()
-                + "', userName='" + user.getUserName()
-                + "', groups='" + emptyGroup
-                + "']";
-        assertEquals(userAsString, user.toString());
-        user.addGroupToUsersListOfGroups(group);
+                + "', userName='" + user.getUserName();
+        String userWithNoGroupsAndCourses = userAsString +
+                "', groups='" + emptyArray +
+                "', courses='" + emptyArray + "']";
+        assertEquals(userWithNoGroupsAndCourses, user.toString());
+
+        assertTrue(user.addGroupToUsersListOfGroups(group));
         String oneGroup = "[ " + user.getGroups().get(0).getGroupName() + " ]";
-        userAsString = "User[Id='" + user.getId()
-                + "', name='" + user.getName()
-                + "', userName='" + user.getUserName()
-                + "', groups='" + oneGroup
-                + "']";
-        assertEquals(userAsString, user.toString());
+        Course course1 = new Course("Name1", "UiB", "description");
+        assertTrue(user.addCourseToUsersListOfCourses(course1));
+        String oneCourse = "[ " + user.getCourses().get(0).getName() + " ]";
+        String userWithOneGroupAndOneCourse = userAsString +
+                "', groups='" + oneGroup +
+                "', courses='" + oneCourse + "']";
+        assertEquals(userWithOneGroupAndOneCourse, user.toString());
+
         Group group2 = new Group("Group 2", "description");
-        user.addGroupToUsersListOfGroups(group2);
+        assertTrue(user.addGroupToUsersListOfGroups(group2));
         assertEquals(2, user.getGroups().size());
         String twoGroups = "[ "
                 + user.getGroups().get(0).getGroupName() + ", "
                 + user.getGroups().get(1).getGroupName() + " ]";
-        userAsString = "User[Id='" + user.getId()
-                + "', name='" + user.getName()
-                + "', userName='" + user.getUserName()
-                + "', groups='" + twoGroups
-                + "']";
-        assertEquals(userAsString, user.toString());
+        Course course2 = new Course("Name2", "HVL", "description");
+        assertTrue(user.addCourseToUsersListOfCourses(course2));
+        String twoCourses = "[ "
+                + user.getCourses().get(0).getName() + ", "
+                + user.getCourses().get(1).getName() + " ]";
+        String userWithTwoGroupsAndTwoCourses = userAsString +
+                "', groups='" + twoGroups +
+                "', courses='" + twoCourses + "']";
+        assertEquals(userWithTwoGroupsAndTwoCourses, user.toString());
     }
 
 }
