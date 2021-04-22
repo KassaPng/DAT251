@@ -87,28 +87,38 @@ class GroupTest {
     @Test
     void aGroupShouldBeCorrectlyRepresentedAsAString() {
         group.getMembers().clear();
-        String noMembers = "[]";
+        String emptyArray = "[]";
         String groupAsString = "Group[Id='" + group.getId() + "', "
                 + "groupName='" + group.getGroupName() + "', "
-                + "description='" + group.getDescription() + "', "
-                + "members='" + noMembers + "']";
-        assertEquals(groupAsString, group.toString());
-        group.addUserToGroup(user);
+                + "description='" + group.getDescription() + "', ";
+        String groupWithNoMembersAndCourses = groupAsString +
+                "members='" + emptyArray + "', " +
+                "courses='" + emptyArray + "']";
+        assertEquals(groupWithNoMembersAndCourses, group.toString());
+
+        assertTrue(group.addUserToGroup(user));
         String oneMember = "[ " + group.getMembers().get(0).getUserName() + " ]";
-        groupAsString = "Group[Id='" + group.getId() + "', "
-                + "groupName='" + group.getGroupName() + "', "
-                + "description='" + group.getDescription() + "', "
-                + "members='" + oneMember + "']";
-        assertEquals(groupAsString, group.toString());
-        group.addUserToGroup(user2);
+        Course course1 = new Course("Name1", "UiB", "description");
+        assertTrue(group.addReferenceToCourse(course1));
+        String oneCourse = "[ " + group.getCourses().get(0).getName() + " ]";
+        String groupWithOneMemberAndOneCourse = groupAsString +
+                "members='" + oneMember + "', " +
+                "courses='" + oneCourse + "']";
+        assertEquals(groupWithOneMemberAndOneCourse, group.toString());
+
+        assertTrue(group.addUserToGroup(user2));
         String twoMembers = "[ "
                 + group.getMembers().get(0).getUserName() + ", "
                 + group.getMembers().get(1).getUserName() + " ]";
-        groupAsString = "Group[Id='" + group.getId() + "', "
-                + "groupName='" + group.getGroupName() + "', "
-                + "description='" + group.getDescription() + "', "
-                + "members='" + twoMembers + "']";
-        assertEquals(groupAsString, group.toString());
+        Course course2 = new Course("Name2", "HVL", "description");
+        assertTrue(group.addReferenceToCourse(course2));
+        String twoCourses = "[ " +
+                group.getCourses().get(0).getName() + ", " +
+                group.getCourses().get(1).getName() + " ]";
+        String groupWithTwoMembersAndTwoCourses = groupAsString +
+                "members='" + twoMembers + "', " +
+                "courses='" + twoCourses + "']";
+        assertEquals(groupWithTwoMembersAndTwoCourses, group.toString());
     }
 
 }
