@@ -1,5 +1,6 @@
 package dat251.project.matching;
 
+import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 
@@ -12,23 +13,47 @@ public class Kmeans {
 
     public static class Centroid { //Todo: placeholder
         public Map<String, Double> coords;
+
         public Centroid(Map<String, Double> coords) {
             this.coords = coords;
         }
     }
 
 
-
-
     private static Random rand = new Random(5);//TODO: remove seed after testing
     private static int maxIterations = 1000;
     private static ArrayList<String> abilities;
-    private static Group group;
+    private static Course course;
     private static Map<Centroid, ArrayList<User>> clusters;
 
-    public Kmeans(Group group) {
-        this.abilities = group.getAbilities().getAbilities();
-        this.group = group;
+    public Kmeans(Course course) {
+        this.abilities = course.getAbilities();
+        this.course = course;
+    }
+
+    /**
+     * @param user The user to be placed in a group
+     * @return The group with the closest matching for this user
+     * @throws NullPointerException if list of groups in course is empty
+     */
+    public static Group findClosestGroup(User user) throws NullPointerException {
+        if (course.getRelatedGroups().isEmpty()) {
+            throw new NullPointerException("No groups registered for this course");
+        }
+        Map<String, Double> abMap = new HashMap<>();
+        for (String ab : abilities) {
+            abMap.put(ab, 0.0);
+        }
+        Group closestGroup = null;
+        double minDist = Double.MAX_VALUE;
+        for (Group group : course.getRelatedGroups()) {
+            Centroid centroid = new Centroid(abMap);
+            centroid = calcNewCentroid(centroid, (ArrayList<User>) group.getMembers());
+            if (distance(centroid.coords, user.getAbilities(course)) < minDist) {
+                closestGroup = group;
+            }
+        }
+        return closestGroup;
     }
 
 
@@ -90,7 +115,7 @@ public class Kmeans {
         double minDist = Double.MAX_VALUE;
         Centroid closest = null;
         for (Centroid centroid : centroids) {
-            double dist = distance(centroid.coords, user.getAbilities(group));
+            double dist = distance(centroid.coords, user.getAbilities(course));
             if (dist < minDist) {
                 minDist = dist;
                 closest = centroid;
@@ -99,7 +124,7 @@ public class Kmeans {
         return closest;
     }
 
-    private static void setToCluster( User user, Centroid centroid) {
+    private static void setToCluster(User user, Centroid centroid) {
         if (clusters.get(centroid) == null) {
             clusters.put(centroid, new ArrayList<>());
         }
@@ -118,7 +143,7 @@ public class Kmeans {
         for (User u : users) {
             for (String ab : abilities) {
                 double current = average.get(ab);
-                centroid.coords.put(ab, current + u.getAbilities(group).get(ab)); //increment average values by user values
+                centroid.coords.put(ab, current + u.getAbilities(course).get(ab)); //increment average values by user values
             }
         }
         for (String ab : abilities) {

@@ -1,5 +1,7 @@
 package dat251.project.entities;
 
+import dat251.project.matching.AbilityList;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +13,9 @@ public class Course {
     private static final int MINIMUM_COURSE_NAME_LENGTH = 3;
     static final String DEFAULT_NAME_OF_EDUCATIONAL_INSTITUTION = "None";
     static final String DEFAULT_COURSE_DESCRIPTION = "This course has not yet defined a description.";
+
+    @Transient
+    private AbilityList listOfAbilities;
 
     @Id
     private long id;
@@ -38,6 +43,7 @@ public class Course {
         this.description = (description == null || description.isEmpty()) ? DEFAULT_COURSE_DESCRIPTION : description;
         this.relatedGroups = new ArrayList<>();
         this.relatedUsers = new ArrayList<>();
+        this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
     }
 
     public boolean addGroup(Group group) {
@@ -120,6 +126,10 @@ public class Course {
 
     public List<User> getRelatedUsers() {
         return relatedUsers;
+    }
+
+    public ArrayList<String> getAbilities() {
+        return listOfAbilities.getListOfAbilities();
     }
 
     public void setRelatedUsers(List<User> relatedUsers) {

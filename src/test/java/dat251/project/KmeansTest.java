@@ -1,9 +1,9 @@
 package dat251.project;
 
+import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 import dat251.project.matching.Kmeans;
-import org.assertj.core.api.Assert;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -13,28 +13,28 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.*;
 
 class KmeansTest {
-    private static Group group;
+    private static Course course;
     private static ArrayList<User> users;
 
 
     @BeforeAll
     public static void init() {
-        group = new Group("testGroup", "test");
+        course = new Course("INF251", "UIB", "");
         users = new ArrayList<>();
         User trond = new User("trond", "trond", "a");
         User espen = new User("espen", "espen", "a");
         User atle = new User("atle", "atle", "a");
         User per = new User("per", "per", "a");
-        trond.addGroupToUsersListOfGroups(group);
-        espen.addGroupToUsersListOfGroups(group);
-        atle.addGroupToUsersListOfGroups(group);
-        per.addGroupToUsersListOfGroups(group);
-        trond.setAbilities(group, "Ambition", 10);
-        trond.setAbilities(group, "Work-rate", 10);
-        trond.setAbilities(group, "Knowledge", 10);
-        espen.setAbilities(group, "Ambition", 5);
-        espen.setAbilities(group, "Work-rate", 5);
-        espen.setAbilities(group, "Knowledge", 5);
+        trond.addCourseToUsersListOfCourses(course);
+        espen.addCourseToUsersListOfCourses(course);
+        atle.addCourseToUsersListOfCourses(course);
+        per.addCourseToUsersListOfCourses(course);
+        trond.setAbilities(course, "Ambition", 10);
+        trond.setAbilities(course, "Work-rate", 10);
+        trond.setAbilities(course, "Knowledge", 10);
+        espen.setAbilities(course, "Ambition", 5);
+        espen.setAbilities(course, "Work-rate", 5);
+        espen.setAbilities(course, "Knowledge", 5);
         users.add(trond);
         users.add(espen);
         users.add(atle);
@@ -43,7 +43,7 @@ class KmeansTest {
 
     @Test
     public void checkThatKClustersAreCreated() {
-        Kmeans km = new Kmeans(group);
+        Kmeans km = new Kmeans(course);
         Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 2);
 
         for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
@@ -52,7 +52,6 @@ class KmeansTest {
         }
         assertEquals(2, centroids.size());
     }
-
 
 
 

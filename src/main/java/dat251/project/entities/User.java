@@ -28,6 +28,7 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Group> groups;
+    private List<Course> courses;
 
 
     // Construct the object to be included in the JSON response instead of groups
@@ -40,7 +41,7 @@ public class User {
         return groupNames;
     }
     @OneToMany
-    private Map<Group, AbilityValues> abilities; //The users abilities for each group.
+    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
 
     public User() {
 
@@ -54,8 +55,21 @@ public class User {
         this.userName = userName;
         setPasswordAsHash(password);
         this.groups = new ArrayList<>();
+        this.courses = new ArrayList<>();
         this.abilities = new HashMap<>();
 
+    }
+
+    public void addCourseToUsersListOfCourses(Course course) {
+        if(course != null && !courses.contains(course)) {
+            courses.add(course);
+        }
+        //create mapping for the course in abilities
+        AbilityValues ab = new AbilityValues();
+        for(String ability : course.getAbilities()) {
+            ab.setAbilities(ability, 0);
+        }
+        abilities.put(course, ab);
     }
 
     public boolean verifyPassword(String keyPhrase) {
@@ -65,12 +79,6 @@ public class User {
     public boolean addGroupToUsersListOfGroups(Group group) {
         if (group != null && !groups.contains(group)) {
             groups.add(group);
-            //create mapping for the group in abilities
-            AbilityValues ab = new AbilityValues();
-            for(int i = 0; i < group.getAbilities().getAbilities().size(); i++) {
-                ab.setAbilities(group.getAbilities().getAbilities().get(i), 0);
-            }
-            abilities.put(group, ab);
             return true;
         } else {
             return false;
@@ -86,11 +94,11 @@ public class User {
             return false;
         }
     }
-    public Map<String, Double> getAbilities(Group group) throws IllegalArgumentException {
-        if(!abilities.containsKey(group)) {
+    public Map<String, Double> getAbilities(Course course) throws IllegalArgumentException {
+        if(!abilities.containsKey(course)) {
             throw new IllegalArgumentException("group does not exist");
         }
-        return abilities.get(group).getAbilityValues();
+        return abilities.get(course).getAbilityValues();
     }
 
     public long getId() {
@@ -136,12 +144,9 @@ public class User {
         this.groups = groups;
     }
 
-    public Map<Group, AbilityValues> getAbilities() {
-        return abilities;
-    }
 
-    public void setAbilities(Group group, String ab, int val) {
-        AbilityValues vals = abilities.get(group);
+    public void setAbilities(Course course, String ab, int val) {
+        AbilityValues vals = abilities.get(course);
         vals.setAbilities(ab, val);
     }
 
