@@ -25,6 +25,10 @@ public class Group {
     @ManyToMany
     private List<User> members;
 
+    @JsonIgnore
+    @ManyToMany
+    private List<Course> courses;
+
     // Construct the object to be included in the JSON response instead of members
     @JsonProperty("members")
     public List<String> getMembersAsJsonString() {
@@ -33,6 +37,16 @@ public class Group {
             memberNames.add(member.getName());
         }
         return memberNames;
+    }
+
+    // Construct the object to be included in the JSON response instead of courses
+    @JsonProperty("courses")
+    public List<String> getCoursesAsJsonString() {
+        List<String> courseNames = new ArrayList<>();
+        for (Course course : courses) {
+            courseNames.add(course.getName());
+        }
+        return courseNames;
     }
 
     public Group() {
@@ -46,6 +60,7 @@ public class Group {
         this.groupName = groupName;
         this.description = description;
         this.members = new ArrayList<>();
+        this.courses = new ArrayList<>();
         this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
     }
 
@@ -105,6 +120,18 @@ public class Group {
 
     public void setListOfAbilities(AbilityList listOfAbilities) {
         this.listOfAbilities = listOfAbilities;
+    }
+
+    public AbilityList getListOfAbilities() {
+        return listOfAbilities;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 
     @Override

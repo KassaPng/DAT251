@@ -32,7 +32,7 @@ public class User {
     @JsonIgnore
     @ManyToMany
     private List<Course> courses;
-    
+
     @OneToMany
     private Map<Course, AbilityValues> abilities; //The users abilities for each group.
 
@@ -157,10 +157,21 @@ public class User {
         this.groups = groups;
     }
 
-
     public void setAbilities(Course course, String ab, int val) {
-        AbilityValues vals = abilities.get(course);
-        vals.setAbilities(ab, val);
+        AbilityValues abilityValues = abilities.get(course);
+        abilityValues.setAbilities(ab, val);
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public Map<Course, AbilityValues> getAbilities() {
+        return abilities;
     }
 
     @Override
