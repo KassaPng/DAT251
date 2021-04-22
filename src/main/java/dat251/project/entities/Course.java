@@ -13,7 +13,7 @@ import java.util.List;
 @Table(name = "course")
 public class Course {
 
-    private static final int MINIMUM_COURSE_NAME_LENGTH = 3;
+    public static final int MINIMUM_COURSE_NAME_LENGTH = 3;
     static final String DEFAULT_NAME_OF_EDUCATIONAL_INSTITUTION = "None";
     static final String DEFAULT_COURSE_DESCRIPTION = "This course has not yet defined a description.";
 
@@ -22,6 +22,7 @@ public class Course {
 
     @Id
     private long id;
+    @Column(unique = true)
     private String name;
     private String institutionName; // Name of educational institution where the course is taught.
     private String description;

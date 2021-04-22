@@ -88,6 +88,17 @@ public class User {
         return false;
     }
 
+    public boolean removeReferenceToCourse(Course course) {
+        if (course != null && courses.contains(course)) {
+            courses.remove(course);
+            //TODO: Remove ability values?
+            return true;
+        }
+        return false;
+    }
+
+
+
     public boolean verifyPassword(String keyPhrase) {
         return Credentials.passwordsMatch(keyPhrase, this.passwordAsHash);
     }
