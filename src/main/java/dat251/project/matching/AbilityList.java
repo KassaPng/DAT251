@@ -1,6 +1,7 @@
 package dat251.project.matching;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class is used to generate the abilities that should be available within a group
@@ -26,27 +27,25 @@ public class AbilityList {
 
     //abilities for programming courses
     public String[] getProgrammingAbilities() {
-        String[] abList = new String[]{
+        return new String[]{
                 "Algorithms",
                 "Databases",
                 "Back-end",
                 "Front-end",
                 "Testing",
         };
-        return abList;
     }
 
     //general abilities
     public String[] getGeneralAbilities() {
-        String[] abList = new String[]{
+        return new String[]{
                 "Ambition",
                 "Work-rate",
                 "Knowledge",
         };
-        return abList;
     }
 
-    public ArrayList<String> getListOfAbilities() {
+    public List<String> getListOfAbilities() {
         return abilities;
     }
 
