@@ -431,11 +431,98 @@ public class Controller {
         }
     }
 
+    @PutMapping("/courses/{courseID}/groups/{groupID}")
+    public @ResponseBody Course registerGroupWithCourse(@PathVariable long courseID,
+                                          @PathVariable long groupID) {
+        log.info("Attempting to register group with ID: {} with course with ID: {}", groupID, courseID);
+        Course course = courseRepository.findById(courseID);
+        Group group = groupRepository.findById(groupID);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(group, GROUP)) {
+            return null;
+        }
+        if (course.addGroup(group)) {
+            log.info("Successfully registered the group: {} with the course: {}",
+                    group.getGroupName(), course.getName());
+            courseRepository.save(course);
+            if (!group.addReferenceToCourse(course)) {
+                log.info("Something went wrong when trying to add a reference to the course in the group");
+            } else {
+                groupRepository.save(group);
+            }
+        } else {
+            log.info("Failed to register group: {} with course: {}", group.getGroupName(), course.getName());
+        }
+        return course;
+    }
 
+    @DeleteMapping("/courses/{courseID}/groups/{groupID}")
+    public @ResponseBody Course removeGroupFromCourse(@PathVariable long courseID,
+                                        @PathVariable long groupID) {
+        log.info("Attempting to deregister group with ID: {} from course with ID: {}", groupID, courseID);
+        Course course = courseRepository.findById(courseID);
+        Group group = groupRepository.findById(groupID);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(group, GROUP)) {
+            return null;
+        }
+        if (course.removeGroup(group)) {
+            log.info("Successfully removed group: {} from course: {}", group.getGroupName(), course.getName());
+            courseRepository.save(course);
+            if (!group.removeReferenceToCourse(course)) {
+                log.info("Something went wrong when trying to remove the reference to course from the group");
+            } else {
+                groupRepository.save(group);
+            }
+        } else {
+            log.info("Failed to remove group: {} from course: {}", group.getGroupName(), course.getName());
+        }
+        return course;
+    }
 
+    @PutMapping("/courses/{courseID}/users/{userID}")
+    public @ResponseBody Course registerUserWithCourse(@PathVariable long courseID,
+                                         @PathVariable long userID) {
+        log.info("Attempting to register user with ID: {} with course with ID: {}", userID, courseID);
+        Course course = courseRepository.findById(courseID);
+        User user = userRepository.findById(userID);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        if (course.addUser(user)) {
+            log.info("Successfully registered user: {} with the course: {}", user.getUserName(), course.getName());
+            courseRepository.save(course);
+            if (!user.addCourseToUsersListOfCourses(course)) {
+                log.info("Something went wrong when trying to add a reference to the course for the user");
+            } else {
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed to register user: {} with the course: {}", user.getUserName(), course.getName());
+        }
+        return course;
+    }
 
-
-
+    @DeleteMapping("/courses/{courseID}/users/{userID}")
+    public @ResponseBody Course removeUserFromCourse(@PathVariable long courseID,
+                                       @PathVariable long userID) {
+        log.info("Attempting to deregister user with ID: {} from course with ID: {}", userID, courseID);
+        Course course = courseRepository.findById(courseID);
+        User user = userRepository.findById(userID);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        if (course.removeUser(user)) {
+            log.info("Successfully removed user: {} from course: {}", user.getUserName(), course.getName());
+            courseRepository.save(course);
+            if (!user.removeReferenceToCourse(course)) {
+                log.info("Something went wrong when trying to remove the reference to course from the user");
+            } else {
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed remove user: {} from course: {}", user.getUserName(), course.getName());
+        }
+        return course;
+    }
 
 
 
