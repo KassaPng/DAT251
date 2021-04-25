@@ -318,7 +318,6 @@ public class Controller {
         return group;
     }
 
-
     @GetMapping("/users/{username}/groups")
     public @ResponseBody List<Group> getUsersGroups(@PathVariable String username) {
         log.info("Getting all groups the user with username: {} is a member off", username);
@@ -326,7 +325,6 @@ public class Controller {
         if (notExistsInDatabase(user, USER)) {
             return null;
         }
-
         return user.getGroups();
     }
 
@@ -445,6 +443,16 @@ public class Controller {
             group.removeReferenceToCourse(course);
             groupRepository.save(group);
         }
+    }
+
+    @GetMapping("/users/{userName}/courses")
+    public @ResponseBody List<Course> getUsersRelatedCourses(@PathVariable String userName) {
+        log.info("Getting all courses the user with userName: {} is registered to", userName);
+        User user = userRepository.findByUserName(userName);
+        if (notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        return user.getCourses();
     }
 
     @PutMapping("/courses/{courseID}/groups/{groupID}")
