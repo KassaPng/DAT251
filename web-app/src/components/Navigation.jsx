@@ -1,8 +1,16 @@
 import React from "react";
 import { withRouter } from "react-router-dom";
+import {getSessionCookie} from "../Cookies/Session";
 
 import Navbar from 'react-bootstrap/Navbar'
 import Nav from 'react-bootstrap/Nav'
+
+function loggedIn() {
+    if (getSessionCookie().email !== "unauthorized")
+        return getSessionCookie().email
+    else
+        return ""
+}
 
 function Navigation(props) {
   return (
@@ -11,7 +19,7 @@ function Navigation(props) {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Link href="/profile">Profile</Nav.Link>
+          <Nav.Link href= {"/profile/" + loggedIn()}>Profile</Nav.Link>
           <Nav.Link href="/group">Group</Nav.Link>
           <Nav.Link href="/search">Find group</Nav.Link>
         </Nav>
