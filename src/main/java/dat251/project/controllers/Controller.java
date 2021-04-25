@@ -3,9 +3,12 @@ package dat251.project.controllers;
 import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
+import dat251.project.matching.AbilityValues;
+import dat251.project.repositories.AbilityValuesRepository;
 import dat251.project.repositories.CourseRepository;
 import dat251.project.repositories.GroupRepository;
 import dat251.project.repositories.UserRepository;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,14 +24,17 @@ public class Controller {
     final UserRepository userRepository;
     final GroupRepository groupRepository;
     final CourseRepository courseRepository;
+    final AbilityValuesRepository abilityValuesRepository;
 
     @Autowired
     public Controller(UserRepository userRepository,
                       GroupRepository groupRepository,
-                      CourseRepository courseRepository) {
+                      CourseRepository courseRepository,
+                      AbilityValuesRepository abilityValuesRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.courseRepository = courseRepository;
+        this.abilityValuesRepository = abilityValuesRepository;
     }
 
 /*
@@ -143,6 +149,9 @@ public class Controller {
             course.removeUser(user);
             courseRepository.save(course);
         }
+        for (AbilityValues abilityValues : user.getAbilities().values()) {
+            abilityValuesRepository.delete(abilityValues);
+        }
     }
 
 /*
@@ -158,8 +167,11 @@ public class Controller {
         // Concatenating request parameters with an empty
         // string to prevent null values.
         String groupName = "" + json.get("groupName");
-        String creatorName = "" +json.get("creatorName"); //adds the group creator to the group by default, reduces the amount of HTTP requests needed
-        User creator = userRepository.findByUserName(creatorName);
+        String creatorName = "" +json.get("creatorName"); // adds the group creator to the group by default,
+        User creator = userRepository.findByUserName(creatorName); // reducing the amount of HTTP requests needed.
+        if (notExistsInDatabase(creator, USER)) {
+            return "Failed to create new group.\nCreator did not exist";
+        }
         if (groupName.length() >= 3) {
             Group group = new Group(groupName, standardGroupDescription);
             group.addUserToGroup(creator);
@@ -167,7 +179,7 @@ public class Controller {
             groupRepository.save(group);
             userRepository.save(creator);
             log.info("Successfully created group: {} with ID: {}", group.getGroupName(), group.getId());
-            return "Successfully created group: " + group.toString();
+            return "Successfully created group: " + group;
         } else {
             log.info("Failed to create the new group");
             return "Failed to create new group." +
@@ -379,11 +391,14 @@ public class Controller {
     }
 
     private void updateCourseName(Course course, String newCourseName) {
-        if (newCourseName.length() >= Course.MINIMUM_COURSE_NAME_LENGTH && !newCourseName.equals("null")
-                && courseRepository.findByName(newCourseName) == null) {
-            course.setName(newCourseName);
-            courseRepository.save(course);
-            log.info("Updated course name to: {}", newCourseName);
+        if (newCourseName.length() >= Course.MINIMUM_COURSE_NAME_LENGTH && !newCourseName.equals("null")) {
+            if (courseRepository.findByName(newCourseName) == null) {
+                course.setName(newCourseName);
+                courseRepository.save(course);
+                log.info("Updated course name to: {}", newCourseName);
+            } else {
+                log.info("Course name was already taken");
+            }
         }
     }
 
@@ -432,13 +447,102 @@ public class Controller {
         }
     }
 
+    @PutMapping("/courses/{courseID}/groups/{groupID}")
+    public @ResponseBody Course registerGroupWithCourse(@PathVariable long courseID,
+                                                        @PathVariable long groupID) {
+        log.info("Attempting to register group with ID: {} with course with ID: {}", groupID, courseID);
+        Course course = courseRepository.findById(courseID);
+        Group group = groupRepository.findById(groupID);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(group, GROUP)) {
+            return null;
+        }
+        if (course.addGroup(group)) {
+            log.info("Successfully registered the group: {} with the course: {}",
+                    group.getGroupName(), course.getName());
+            courseRepository.save(course);
+            if (!group.addReferenceToCourse(course)) {
+                log.info("Something went wrong when trying to add a reference to the course in the group");
+            } else {
+                groupRepository.save(group);
+            }
+        } else {
+            log.info("Failed to register group: {} with course: {}", group.getGroupName(), course.getName());
+        }
+        return course;
+    }
 
+    @DeleteMapping("/courses/{courseID}/groups/{groupID}")
+    public @ResponseBody Course removeGroupFromCourse(@PathVariable long courseID,
+                                                      @PathVariable long groupID) {
+        log.info("Attempting to deregister group with ID: {} from course with ID: {}", groupID, courseID);
+        Course course = courseRepository.findById(courseID);
+        Group group = groupRepository.findById(groupID);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(group, GROUP)) {
+            return null;
+        }
+        if (course.removeGroup(group)) {
+            log.info("Successfully removed group: {} from course: {}", group.getGroupName(), course.getName());
+            courseRepository.save(course);
+            if (!group.removeReferenceToCourse(course)) {
+                log.info("Something went wrong when trying to remove the reference to course from the group");
+            } else {
+                groupRepository.save(group);
+            }
+        } else {
+            log.info("Failed to remove group: {} from course: {}", group.getGroupName(), course.getName());
+        }
+        return course;
+    }
 
+    @PutMapping("/courses/{courseID}/users/{userName}")
+    public @ResponseBody Course registerUserWithCourse(@PathVariable long courseID,
+                                                       @PathVariable String userName) {
+        log.info("Attempting to register user: {} with course with ID: {}", userName, courseID);
+        Course course = courseRepository.findById(courseID);
+        User user = userRepository.findByUserName(userName);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        if (course.addUser(user)) {
+            log.info("Successfully registered user: {} with the course: {}", user.getUserName(), course.getName());
+            courseRepository.save(course);
+            if (!user.addCourseToUsersListOfCourses(course)) {
+                log.info("Something went wrong when trying to add a reference to the course for the user");
+            } else {
+                AbilityValues usersAbilitiesForThisCourse = user.getAbilities().get(course.getId());
+                abilityValuesRepository.save(usersAbilitiesForThisCourse);
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed to register user: {} with the course: {}", user.getUserName(), course.getName());
+        }
+        return course;
+    }
 
-
-
-
-
+    @DeleteMapping("/courses/{courseID}/users/{userName}")
+    public @ResponseBody Course removeUserFromCourse(@PathVariable long courseID,
+                                                     @PathVariable String userName) {
+        log.info("Attempting to deregister user: {} from course with ID: {}", userName, courseID);
+        Course course = courseRepository.findById(courseID);
+        User user = userRepository.findByUserName(userName);
+        if (notExistsInDatabase(course, COURSE) || notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        if (course.removeUser(user)) {
+            log.info("Successfully removed user: {} from course: {}", user.getUserName(), course.getName());
+            courseRepository.save(course);
+            AbilityValues usersAbilitiesForThisCourse = user.getAbilities().get(course.getId());
+            if (!user.removeReferenceToCourse(course)) {
+                log.info("Something went wrong when trying to remove the reference to course from the user");
+            } else {
+                abilityValuesRepository.delete(usersAbilitiesForThisCourse);
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed remove user: {} from course: {}", user.getUserName(), course.getName());
+        }
+        return course;
+    }
 
     private static final String GROUP = "Group";
     private static final String USER = "User";
