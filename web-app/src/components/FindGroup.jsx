@@ -2,7 +2,8 @@ import React from "react";
 import {getSessionCookie} from "../Cookies/Session";
 import {FormControl, Form, Table, Modal, Alert} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-
+import { ToastContainer, toast } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 class FindGroup extends React.Component {
     constructor(props) {
@@ -44,22 +45,25 @@ class FindGroup extends React.Component {
     }
     handleJoinGroup = (groupID) => {
         const xhr = new XMLHttpRequest()
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+        toast.success("Successfully sent the join request")
 
         xhr.addEventListener('load', () => {
             const data = xhr.responseText;
-            const jsonResponse = JSON.parse(data)
-            console.log("json response: ",data  )
-            alert("Successfully sent the request")
+            console.log("json response: ",data)
+
+            if (data.toLowerCase().includes("group"))
+              toast.success("Successfully joined the group")
+            else
+              toast.error("Failed to join the group, try again")
         })
 
         const username =  getSessionCookie().email;
-        console.log("my username: ", username)
         const groupUpdateURL = 'http://localhost:8080/groups/' + groupID + "/members";
+        console.log("groupUpdateURL", groupUpdateURL)
 
         xhr.open('PUT', groupUpdateURL)
         xhr.setRequestHeader('Content-Type', 'application/json');
-
         const jsonString = JSON.stringify( {
             "userName": username,
         })
@@ -132,6 +136,7 @@ class FindGroup extends React.Component {
                             {this.renderGroups()}
                         </div>
                     </div>
+                    <ToastContainer />
                 </div>
             </div>
         );

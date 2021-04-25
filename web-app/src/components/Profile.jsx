@@ -38,7 +38,8 @@ class Profile extends React.Component {
     });
   }
   addAbility = () => {
-    console.log(this.state.abilityToAdd)
+
+
   }
 
   renderAbilitySlider = () => {

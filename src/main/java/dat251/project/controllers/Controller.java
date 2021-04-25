@@ -307,13 +307,14 @@ public class Controller {
     }
 
 
-    @GetMapping("/users/{userID}/groups")
-    public @ResponseBody List<Group> getUsersGroups(@PathVariable long userID) {
-        log.info("Getting all groups the user with ID: {} is a member off", userID);
-        User user = userRepository.findById(userID);
+    @GetMapping("/users/{username}/groups")
+    public @ResponseBody List<Group> getUsersGroups(@PathVariable String username) {
+        log.info("Getting all groups the user with username: {} is a member off", username);
+        User user = userRepository.findByUserName(username);
         if (notExistsInDatabase(user, USER)) {
             return null;
         }
+
         return user.getGroups();
     }
 
