@@ -62,7 +62,7 @@ public class Group {
         this.description = description;
         this.members = new ArrayList<>();
         this.courses = new ArrayList<>();
-        this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
+        //this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
     }
 
     public boolean addUserToGroup(User user) {
