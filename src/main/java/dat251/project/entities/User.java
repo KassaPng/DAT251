@@ -191,7 +191,6 @@ public class User {
 
     @Override
     public String toString() {
-        /*
         return String.format(
                 "User[Id='%d', " +
                         "name='%s', " +
@@ -202,7 +201,6 @@ public class User {
                 EntityUtilities.printListContents(courses)
         );
 
-         */
-        return name;
+//        return name;
     }
 }

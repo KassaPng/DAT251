@@ -177,7 +177,7 @@ class MyGroup extends React.Component {
 
     const jsonString = JSON.stringify( {
       "courseName": this.state.courseToCreateName,
-      "educationalInstitution": this.state.courseToCreateDescription,
+      "institution": this.state.courseToCreateInstitutionName,
       "description": this.state.courseToCreateDescription,
 
     })
