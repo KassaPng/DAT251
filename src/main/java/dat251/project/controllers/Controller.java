@@ -319,13 +319,14 @@ public class Controller {
     }
 
 
-    @GetMapping("/users/{userID}/groups")
-    public @ResponseBody List<Group> getUsersGroups(@PathVariable long userID) {
-        log.info("Getting all groups the user with ID: {} is a member off", userID);
-        User user = userRepository.findById(userID);
+    @GetMapping("/users/{username}/groups")
+    public @ResponseBody List<Group> getUsersGroups(@PathVariable String username) {
+        log.info("Getting all groups the user with username: {} is a member off", username);
+        User user = userRepository.findByUserName(username);
         if (notExistsInDatabase(user, USER)) {
             return null;
         }
+
         return user.getGroups();
     }
 
@@ -370,6 +371,31 @@ public class Controller {
         updateCourseInstitution(course, newEducationalInstitution);
         updateCourseDescription(course, newDescription);
         log.info("Successfully updated the course information");
+        return course;
+    }
+
+    @PutMapping("/courses/{courseID}/members")
+    public @ResponseBody Course addUserToCourse(@PathVariable long courseID,
+                                              @RequestBody Map<String, String> json) {
+        log.info("Attempting to add a user to group with ID: {}", courseID);
+        Course course = courseRepository.findById(courseID);
+        String nameOfUser = "" + json.get("userName");
+        User user = userRepository.findByUserName(nameOfUser);
+        if (notExistsInDatabase(course, COURSE)
+                || notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        if (course.addUser(user)) {
+            log.info("Successfully made user: {} a member of group with ID: {}", user.getUserName(), course.getId());
+            courseRepository.save(course);
+            if(!user.addCourseToUsersListOfCourses(course)) {
+                log.info("Something went wrong when trying to add group to users list of groups");
+            } else {
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed to add user: {} as a member to group with ID: {}", user.getUserName(), course.getId());
+        }
         return course;
     }
 

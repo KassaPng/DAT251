@@ -42,12 +42,16 @@ public class Kmeans {
             abMap.put(ab, 0.0);
         }
         Group closestGroup = null;
-        double minDist = Double.MAX_VALUE;
+        double minDist = 100.0;
         for (Group group : course.getRelatedGroups()) {
             Centroid centroid = new Centroid(abMap);
             centroid = calcNewCentroid(centroid, (ArrayList<User>) group.getMembers());
-            if (distance(centroid.coords, user.getAbilities(course)) < minDist) {
+            //System.out.println("dist: "+ distance(centroid.coords, user.getAbilities(course)));
+            //System.out.println("min: " + minDist);
+            Double dist = distance(centroid.coords, user.getAbilities(course));
+            if (dist < minDist) {
                 closestGroup = group;
+                minDist = dist;
             }
         }
         return closestGroup;
