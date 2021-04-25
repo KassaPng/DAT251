@@ -4,6 +4,7 @@ import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.*;
 
 public class Kmeans {
@@ -57,6 +58,9 @@ public class Kmeans {
 
 
     public static Map<Centroid, ArrayList<User>> runKmeans(ArrayList<User> users, int k) {
+        int clusterSize = (users.size() % k == 0) ? (users.size()/k) : ((users.size()/k)+1);
+        System.out.println("clusterSize: " +clusterSize);
+        Map<Centroid, Integer> sizes = new HashMap<>();
         clusters = new HashMap<>();
         Map<Centroid, ArrayList<User>> lastClusters = new HashMap<>();
         ArrayList<Centroid> centroids = new ArrayList<>();
@@ -70,14 +74,28 @@ public class Kmeans {
             Centroid randC = new Centroid(randomMap);
             centroids.add(randC);
             clusters.put(randC, new ArrayList<>());
+            sizes.put(randC, 0);
         }
 
 
         for (int i = 0; i < maxIterations; i++) {
             for (User u : users) {
+                ArrayList<Centroid> removedCentroids = new ArrayList<>();
                 //Assign each user to a cluster
-                Centroid closest = closestCentroid(centroids, u);
-                setToCluster(u, closest);
+                while(true) {
+                    Centroid closest = closestCentroid(centroids, u);
+                    if (sizes.get(closest) < clusterSize) { //still room in cluster
+                        setToCluster(u, closest);
+                        sizes.put(closest, sizes.get(closest) + 1);
+                        centroids.addAll(removedCentroids);
+                        break;
+                    }
+                    else { //cluster full
+                        removedCentroids.add(closest);
+                        centroids.remove(closest);
+                    }
+                }
+
             }
             boolean done = clusters.equals(lastClusters); //Todo: Equals never true for some reason
             lastClusters = clusters;
@@ -88,10 +106,12 @@ public class Kmeans {
             //update centroids
             ArrayList<Centroid> newCentroids = new ArrayList<>();
             Map<Centroid, ArrayList<User>> newClusters = new HashMap<>();
+            sizes.clear();
             for (Centroid c : centroids) {
                 Centroid newC = calcNewCentroid(c, clusters.get(c));
                 newCentroids.add(newC);
                 newClusters.put(newC, new ArrayList<>());
+                sizes.put(newC, 0);
             }
             centroids = newCentroids;
             clusters = newClusters;

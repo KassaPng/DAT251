@@ -97,7 +97,7 @@ class KmeansTest {
     @Test
     public void findGroupTest() {
         Kmeans km = new Kmeans(course);
-        Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 3);
+        Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 5);
         int count = 1;
         for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
             System.out.println("Key = " + entry.getKey().coords +
@@ -119,6 +119,8 @@ class KmeansTest {
         Group ans = km.findClosestGroup(test);
         System.out.println("found group: " +ans);
     }
+
+
 
 
 
