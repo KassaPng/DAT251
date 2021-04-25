@@ -362,6 +362,31 @@ public class Controller {
         return course;
     }
 
+    @PutMapping("/courses/{courseID}/members")
+    public @ResponseBody Course addUserToCourse(@PathVariable long courseID,
+                                              @RequestBody Map<String, String> json) {
+        log.info("Attempting to add a user to group with ID: {}", courseID);
+        Course course = courseRepository.findById(courseID);
+        String nameOfUser = "" + json.get("userName");
+        User user = userRepository.findByUserName(nameOfUser);
+        if (notExistsInDatabase(course, COURSE)
+                || notExistsInDatabase(user, USER)) {
+            return null;
+        }
+        if (course.addUser(user)) {
+            log.info("Successfully made user: {} a member of group with ID: {}", user.getUserName(), course.getId());
+            courseRepository.save(course);
+            if(!user.addCourseToUsersListOfCourses(course)) {
+                log.info("Something went wrong when trying to add group to users list of groups");
+            } else {
+                userRepository.save(user);
+            }
+        } else {
+            log.info("Failed to add user: {} as a member to group with ID: {}", user.getUserName(), course.getId());
+        }
+        return course;
+    }
+
     private void updateCourseDescription(Course course, String newDescription) {
         if (!newDescription.isEmpty() && !newDescription.equals("null")) {
             course.setDescription(newDescription);

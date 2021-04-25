@@ -13,8 +13,10 @@ import java.util.*;
 public class Group {
 
     public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
-    @Transient
+
+    @OneToOne
     private AbilityList listOfAbilities;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;

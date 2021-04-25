@@ -1,12 +1,20 @@
 package dat251.project.matching;
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * This class is used to generate the abilities that should be available within a group
  */
+@Entity
 public class AbilityList {
-    private ArrayList<String> abilities;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @ElementCollection
+    private List<String> abilities;
 
     /**
      *  Creates the list of abilities that should be used for a course.
@@ -21,6 +29,10 @@ public class AbilityList {
         if(programming) {
             abilities.addAll(Arrays.asList(getProgrammingAbilities()));
         }
+
+    }
+
+    public AbilityList() {
 
     }
 
@@ -46,7 +58,7 @@ public class AbilityList {
         return abList;
     }
 
-    public ArrayList<String> getListOfAbilities() {
+    public List<String> getListOfAbilities() {
         return abilities;
     }
 

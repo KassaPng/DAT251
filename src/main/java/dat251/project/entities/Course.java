@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityList;
+import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,10 +18,13 @@ public class Course {
     static final String DEFAULT_NAME_OF_EDUCATIONAL_INSTITUTION = "None";
     static final String DEFAULT_COURSE_DESCRIPTION = "This course has not yet defined a description.";
 
-    @Transient
+//    @Transient
+    @OneToOne
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private AbilityList listOfAbilities;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     @Column(unique = true)
     private String name;
