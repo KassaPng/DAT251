@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import dat251.project.entities.utilities.EntityUtilities;
 import dat251.project.matching.AbilityList;
-import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,11 +17,6 @@ public class Course {
     static final String DEFAULT_NAME_OF_EDUCATIONAL_INSTITUTION = "None";
     static final String DEFAULT_COURSE_DESCRIPTION = "This course has not yet defined a description.";
 
-//    @Transient
-    @OneToOne
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private AbilityList listOfAbilities;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -30,6 +24,9 @@ public class Course {
     private String name;
     private String institutionName; // Name of educational institution where the course is taught.
     private String description;
+
+    @ElementCollection
+    private List<String> listOfAbilities;
 
     @JsonIgnore
     @ManyToMany
@@ -72,7 +69,9 @@ public class Course {
         this.description = (description == null || description.isEmpty()) ? DEFAULT_COURSE_DESCRIPTION : description;
         this.relatedGroups = new ArrayList<>();
         this.relatedUsers = new ArrayList<>();
-        this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
+       // var abilityList = new AbilityList(true,false); //TODO: should be set by group admin
+        this.listOfAbilities = AbilityList.createAbilityList(true, false);
+    //abilityList.getListOfAbilities();
     }
 
     public boolean addGroup(Group group) {
@@ -160,10 +159,10 @@ public class Course {
     }
 
     public List<String> getAbilities() {
-        return listOfAbilities.getListOfAbilities();
+        return listOfAbilities;
     }
 
-    public void setAbilities(AbilityList listOfAbilities) {
+    public void setAbilities(List<String> listOfAbilities) {
         this.listOfAbilities = listOfAbilities;
     }
 

@@ -35,7 +35,7 @@ public class User {
     private List<Course> courses;
 
     @OneToMany
-    private Map<Course, AbilityValues> abilities; //The users abilities for each group.
+    private Map<Long, AbilityValues> abilities; //The users abilities for each group.
 
     // Construct the object to be included in the JSON response instead of groups
     @JsonProperty("groups")
@@ -71,19 +71,15 @@ public class User {
         this.groups = new ArrayList<>();
         this.courses = new ArrayList<>();
         this.abilities = new HashMap<>();
-
     }
 
     public boolean addCourseToUsersListOfCourses(Course course) {
         if(course != null && !courses.contains(course)) {
             courses.add(course);
             //create mapping for the course in abilities
-            AbilityValues ab = new AbilityValues();
-            for(String ability : course.getAbilities()) {
-                ab.setAbilities(ability, 0);
-            }
-            abilities.put(course, ab);
-            course.addUser(this);
+            var abilityValues = new AbilityValues();
+            abilityValues.initializeAbilities(course.getAbilities());
+            abilities.put(course.getId(), abilityValues);
             return true;
         }
         return false;
@@ -92,13 +88,11 @@ public class User {
     public boolean removeReferenceToCourse(Course course) {
         if (course != null && courses.contains(course)) {
             courses.remove(course);
-            //TODO: Remove ability values?
+            abilities.remove(course.getId());
             return true;
         }
         return false;
     }
-
-
 
     public boolean verifyPassword(String keyPhrase) {
         return Credentials.passwordsMatch(keyPhrase, this.passwordAsHash);
@@ -116,17 +110,17 @@ public class User {
     public boolean removeGroupFromListOfGroups(Group group) {
         if (group != null && groups.contains(group)) {
             groups.remove(group);
-            abilities.remove(group);
+         //   abilities.remove(group);
             return true;
         } else {
             return false;
         }
     }
     public Map<String, Double> getAbilities(Course course) throws IllegalArgumentException {
-        if(!abilities.containsKey(course)) {
-            throw new IllegalArgumentException("group does not exist");
+        if(!abilities.containsKey(course.getId())) {
+            throw new IllegalArgumentException("Course does not exist");
         }
-        return abilities.get(course).getAbilityValues();
+        return abilities.get(course.getId()).getAbilities();
     }
 
     public long getId() {
@@ -172,9 +166,9 @@ public class User {
         this.groups = groups;
     }
 
-    public void setAbilities(Course course, String ab, int val) {
-        AbilityValues abilityValues = abilities.get(course);
-        abilityValues.setAbilities(ab, val);
+    public void setAbilities(Course course, String ability, int value) {
+        AbilityValues abilityValues = abilities.get(course.getId());
+        abilityValues.setAbilities(ability, value);
     }
 
     public List<Course> getCourses() {
@@ -185,13 +179,16 @@ public class User {
         this.courses = courses;
     }
 
-    public Map<Course, AbilityValues> getAbilities() {
+    public Map<Long, AbilityValues> getAbilities() {
         return abilities;
+    }
+
+    public void setAbilities(Map<Long, AbilityValues> abilities) {
+        this.abilities = abilities;
     }
 
     @Override
     public String toString() {
-        /*
         return String.format(
                 "User[Id='%d', " +
                         "name='%s', " +
@@ -201,8 +198,5 @@ public class User {
                 id, name, userName, EntityUtilities.printListContents(groups),
                 EntityUtilities.printListContents(courses)
         );
-
-         */
-        return name;
     }
 }
