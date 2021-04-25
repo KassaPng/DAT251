@@ -161,8 +161,11 @@ public class Controller {
         // Concatenating request parameters with an empty
         // string to prevent null values.
         String groupName = "" + json.get("groupName");
-        String creatorName = "" +json.get("creatorName"); //adds the group creator to the group by default, reduces the amount of HTTP requests needed
-        User creator = userRepository.findByUserName(creatorName);
+        String creatorName = "" +json.get("creatorName"); // adds the group creator to the group by default,
+        User creator = userRepository.findByUserName(creatorName); // reducing the amount of HTTP requests needed.
+        if (notExistsInDatabase(creator, USER)) {
+            return "Failed to create new group.\nCreator did not exist";
+        }
         if (groupName.length() >= 3) {
             Group group = new Group(groupName, standardGroupDescription);
             group.addUserToGroup(creator);
@@ -170,7 +173,7 @@ public class Controller {
             groupRepository.save(group);
             userRepository.save(creator);
             log.info("Successfully created group: {} with ID: {}", group.getGroupName(), group.getId());
-            return "Successfully created group: " + group.toString();
+            return "Successfully created group: " + group;
         } else {
             log.info("Failed to create the new group");
             return "Failed to create new group." +
@@ -381,11 +384,14 @@ public class Controller {
     }
 
     private void updateCourseName(Course course, String newCourseName) {
-        if (newCourseName.length() >= Course.MINIMUM_COURSE_NAME_LENGTH && !newCourseName.equals("null")
-                && courseRepository.findByName(newCourseName) == null) {
-            course.setName(newCourseName);
-            courseRepository.save(course);
-            log.info("Updated course name to: {}", newCourseName);
+        if (newCourseName.length() >= Course.MINIMUM_COURSE_NAME_LENGTH && !newCourseName.equals("null")) {
+            if (courseRepository.findByName(newCourseName) == null) {
+                course.setName(newCourseName);
+                courseRepository.save(course);
+                log.info("Updated course name to: {}", newCourseName);
+            } else {
+                log.info("Course name was already taken");
+            }
         }
     }
 
@@ -436,7 +442,7 @@ public class Controller {
 
     @PutMapping("/courses/{courseID}/groups/{groupID}")
     public @ResponseBody Course registerGroupWithCourse(@PathVariable long courseID,
-                                          @PathVariable long groupID) {
+                                                        @PathVariable long groupID) {
         log.info("Attempting to register group with ID: {} with course with ID: {}", groupID, courseID);
         Course course = courseRepository.findById(courseID);
         Group group = groupRepository.findById(groupID);
@@ -460,7 +466,7 @@ public class Controller {
 
     @DeleteMapping("/courses/{courseID}/groups/{groupID}")
     public @ResponseBody Course removeGroupFromCourse(@PathVariable long courseID,
-                                        @PathVariable long groupID) {
+                                                      @PathVariable long groupID) {
         log.info("Attempting to deregister group with ID: {} from course with ID: {}", groupID, courseID);
         Course course = courseRepository.findById(courseID);
         Group group = groupRepository.findById(groupID);
@@ -483,7 +489,7 @@ public class Controller {
 
     @PutMapping("/courses/{courseID}/users/{userID}")
     public @ResponseBody Course registerUserWithCourse(@PathVariable long courseID,
-                                         @PathVariable long userID) {
+                                                       @PathVariable long userID) {
         log.info("Attempting to register user with ID: {} with course with ID: {}", userID, courseID);
         Course course = courseRepository.findById(courseID);
         User user = userRepository.findById(userID);
@@ -506,7 +512,7 @@ public class Controller {
 
     @DeleteMapping("/courses/{courseID}/users/{userID}")
     public @ResponseBody Course removeUserFromCourse(@PathVariable long courseID,
-                                       @PathVariable long userID) {
+                                                     @PathVariable long userID) {
         log.info("Attempting to deregister user with ID: {} from course with ID: {}", userID, courseID);
         Course course = courseRepository.findById(courseID);
         User user = userRepository.findById(userID);
@@ -526,8 +532,6 @@ public class Controller {
         }
         return course;
     }
-
-
 
     private static final String GROUP = "Group";
     private static final String USER = "User";
