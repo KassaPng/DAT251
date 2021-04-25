@@ -83,6 +83,7 @@ public class User {
                 ab.setAbilities(ability, 0);
             }
             abilities.put(course, ab);
+            course.addUser(this);
             return true;
         }
         return false;
@@ -190,6 +191,7 @@ public class User {
 
     @Override
     public String toString() {
+        /*
         return String.format(
                 "User[Id='%d', " +
                         "name='%s', " +
@@ -199,5 +201,8 @@ public class User {
                 id, name, userName, EntityUtilities.printListContents(groups),
                 EntityUtilities.printListContents(courses)
         );
+
+         */
+        return name;
     }
 }
