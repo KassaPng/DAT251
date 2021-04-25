@@ -14,15 +14,15 @@ public class Group {
 
     public static final int MAX_GROUP_DESCRIPTION_LENGTH = 500;
 
-    @OneToOne
-    private AbilityList listOfAbilities;
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String groupName;
     @Column(length = MAX_GROUP_DESCRIPTION_LENGTH)
     private String description;
+
+    @ElementCollection
+    private List<String> listOfAbilities;
 
     @JsonIgnore
     @ManyToMany
@@ -64,7 +64,7 @@ public class Group {
         this.description = description;
         this.members = new ArrayList<>();
         this.courses = new ArrayList<>();
-        //this.listOfAbilities = new AbilityList(true,false); //TODO: should be set by group admin
+        this.listOfAbilities = AbilityList.createAbilityList(true, false); //TODO: should be set by group admin
     }
 
     public boolean addUserToGroup(User user) {
@@ -135,16 +135,12 @@ public class Group {
         this.members = members;
     }
 
-    public AbilityList getAbilities() {
+    public List<String> getListOfAbilities() {
         return listOfAbilities;
     }
 
-    public void setListOfAbilities(AbilityList listOfAbilities) {
+    public void setListOfAbilities(List<String> listOfAbilities) {
         this.listOfAbilities = listOfAbilities;
-    }
-
-    public AbilityList getListOfAbilities() {
-        return listOfAbilities;
     }
 
     public List<Course> getCourses() {
