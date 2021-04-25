@@ -21,14 +21,17 @@ public class Controller {
     final UserRepository userRepository;
     final GroupRepository groupRepository;
     final CourseRepository courseRepository;
+    final AbilityValuesRepository abilityValuesRepository;
 
     @Autowired
     public Controller(UserRepository userRepository,
                       GroupRepository groupRepository,
-                      CourseRepository courseRepository) {
+                      CourseRepository courseRepository,
+                      AbilityValuesRepository abilityValuesRepository) {
         this.userRepository = userRepository;
         this.groupRepository = groupRepository;
         this.courseRepository = courseRepository;
+        this.abilityValuesRepository = abilityValuesRepository;
     }
 
 /*
