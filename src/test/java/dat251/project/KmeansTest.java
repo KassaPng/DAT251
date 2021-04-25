@@ -84,11 +84,13 @@ class KmeansTest {
     public void checkThatKClustersAreCreated() {
         Kmeans km = new Kmeans(course);
         Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 3);
-
+        /*
         for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
             System.out.println("Key = " + entry.getKey().coords +
                     ", Value = " + entry.getValue());
         }
+
+         */
         assertEquals(3, centroids.size());
     }
 
@@ -97,6 +99,10 @@ class KmeansTest {
         Kmeans km = new Kmeans(course);
         Map<Kmeans.Centroid, ArrayList<User>> centroids = km.runKmeans(users, 3);
         int count = 1;
+        for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
+            System.out.println("Key = " + entry.getKey().coords +
+                    ", Value = " + entry.getValue());
+        }
         for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
             Group g = new Group("Group"+count,"");
             for(User u : entry.getValue()) {
@@ -111,7 +117,7 @@ class KmeansTest {
         test.setAbilities(course, "Work-rate", 2);
         test.setAbilities(course, "Knowledge", 3);
         Group ans = km.findClosestGroup(test);
-        System.out.println(ans);
+        System.out.println("found group: " +ans);
     }
 
 
