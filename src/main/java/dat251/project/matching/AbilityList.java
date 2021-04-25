@@ -1,4 +1,6 @@
 package dat251.project.matching;
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,6 +16,7 @@ public class AbilityList {
     private long id;
 
     @ElementCollection
+    @Cascade(org.hibernate.annotations.CascadeType.ALL)
     private List<String> abilities;
 
     /**
