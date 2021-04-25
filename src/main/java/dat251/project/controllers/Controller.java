@@ -3,9 +3,12 @@ package dat251.project.controllers;
 import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
+import dat251.project.matching.AbilityValues;
+import dat251.project.repositories.AbilityValuesRepository;
 import dat251.project.repositories.CourseRepository;
 import dat251.project.repositories.GroupRepository;
 import dat251.project.repositories.UserRepository;
+import org.apache.http.protocol.HTTP;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,6 +148,9 @@ public class Controller {
         for (Course course : user.getCourses()) {
             course.removeUser(user);
             courseRepository.save(course);
+        }
+        for (AbilityValues abilityValues : user.getAbilities().values()) {
+            abilityValuesRepository.delete(abilityValues);
         }
     }
 
@@ -502,6 +508,8 @@ public class Controller {
             if (!user.addCourseToUsersListOfCourses(course)) {
                 log.info("Something went wrong when trying to add a reference to the course for the user");
             } else {
+                AbilityValues usersAbilitiesForThisCourse = user.getAbilities().get(course.getId());
+                abilityValuesRepository.save(usersAbilitiesForThisCourse);
                 userRepository.save(user);
             }
         } else {
@@ -522,9 +530,11 @@ public class Controller {
         if (course.removeUser(user)) {
             log.info("Successfully removed user: {} from course: {}", user.getUserName(), course.getName());
             courseRepository.save(course);
+            AbilityValues usersAbilitiesForThisCourse = user.getAbilities().get(course.getId());
             if (!user.removeReferenceToCourse(course)) {
                 log.info("Something went wrong when trying to remove the reference to course from the user");
             } else {
+                abilityValuesRepository.delete(usersAbilitiesForThisCourse);
                 userRepository.save(user);
             }
         } else {
