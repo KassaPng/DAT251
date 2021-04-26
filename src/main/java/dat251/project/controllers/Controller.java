@@ -98,12 +98,33 @@ public class Controller {
         String newName = "" + json.get("newName");
         String newPassword = "" + json.get("newPassword");
         String repeatedNewPassword = "" + json.get("repeatedNewPassword");
+
+        String abilityScore = "" + json.get("abilityScore");
+        String abilityName = "" + json.get("abilityName");
+        String abilityGroupName = "" + json.get("abilityGroupName");
+        System.out.println(abilityScore);
+        System.out.println(abilityName);
+        System.out.println(abilityGroupName);
+
+
+        if (!abilityScore.equals(""))
+            updateAbility(user, abilityName, abilityScore, abilityGroupName);
         updateName(user, newName);
         updatePassword(user, newPassword, repeatedNewPassword);
         log.info("Successfully updated the user with ID: {}", user.getId());
         return user;
     }
 
+
+    private void updateAbility(User user, String abilityName, String abilityScore, String abilityGroupName) {
+        int score = Integer.parseInt(abilityScore);
+        Course course = courseRepository.findByName(abilityGroupName);
+        user.setAbilities(course, abilityName, score);
+        AbilityValues av = user.getAbilities().get(course.getId());
+        abilityValuesRepository.save(av);
+        userRepository.save(user);
+
+    }
     private void updateName(User user, String newName) {
         if (!newName.isEmpty() && !newName.equals("null")) {
             user.setName(newName);
