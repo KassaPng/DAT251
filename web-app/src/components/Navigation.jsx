@@ -21,7 +21,8 @@ function Navigation(props) {
         <Nav className="mr-auto">
           <Nav.Link href= {"/profile/" + loggedIn()}>Profile</Nav.Link>
           <Nav.Link href="/group">Group</Nav.Link>
-          <Nav.Link href="/search">Find group</Nav.Link>
+          <Nav.Link href="/search">Find Group</Nav.Link>
+          <Nav.Link href="/searchCourse">Find Course</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
