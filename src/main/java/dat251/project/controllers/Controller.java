@@ -188,18 +188,27 @@ public class Controller {
         log.info("Attempting to create a new Group");
         // Concatenating request parameters with an empty
         // string to prevent null values.
+        String courseName = "" + json.get("courseName");
         String groupName = "" + json.get("groupName");
         String creatorName = "" +json.get("creatorName"); // adds the group creator to the group by default,
+
         User creator = userRepository.findByUserName(creatorName); // reducing the amount of HTTP requests needed.
         if (notExistsInDatabase(creator, USER)) {
             return "Failed to create new group.\nCreator did not exist";
         }
         if (groupName.length() >= 3) {
             Group group = new Group(groupName, standardGroupDescription);
+            Course course = courseRepository.findByName(courseName);
+
             group.addUserToGroup(creator);
             creator.addGroupToUsersListOfGroups(group);
+
+            course.addGroup(group);
+            group.addReferenceToCourse(course);
+
             groupRepository.save(group);
             userRepository.save(creator);
+            courseRepository.save(course);
             log.info("Successfully created group: {} with ID: {}", group.getGroupName(), group.getId());
             return "Successfully created group: " + group;
         } else {
