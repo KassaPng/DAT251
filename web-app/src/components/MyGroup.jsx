@@ -177,7 +177,7 @@ class MyGroup extends React.Component {
 
     const jsonString = JSON.stringify( {
       "courseName": this.state.courseToCreateName,
-      "educationalInstitution": this.state.courseToCreateDescription,
+      "institution": this.state.courseToCreateInstitutionName,
       "description": this.state.courseToCreateDescription,
 
     })
@@ -485,7 +485,7 @@ class MyGroup extends React.Component {
           {
             this.state.groups.map((group,index) =>
             <tr>
-              <td onMouseDown= {() => {this.handleEditGroupShow(group.id)} }>{group.id}</td>
+              <td onMouseDown= {() => {this.handleEditGroupShow(group.id)} }>{<b style={{ color: 'RoyalBlue' }}>{group.id}</b>}</td>
               <td>{group.groupName}</td>
               <td>{group.description}</td>
               <td>{group.members}</td>
