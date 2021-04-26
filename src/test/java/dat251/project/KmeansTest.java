@@ -113,9 +113,9 @@ class KmeansTest {
         }
         User test = new User("TEST", "TEST", "a");
         test.addCourseToUsersListOfCourses(course);
-        test.setAbilities(course, "Ambition", 1);
+        test.setAbilities(course, "Ambition", 3);
         test.setAbilities(course, "Work-rate", 2);
-        test.setAbilities(course, "Knowledge", 3);
+        test.setAbilities(course, "Knowledge", 1);
         Group ans = km.findClosestGroup(test);
         System.out.println("found group: " +ans);
     }
