@@ -46,7 +46,8 @@ public class Kmeans {
         double minDist = 100.0;
         for (Group group : course.getRelatedGroups()) {
             Centroid centroid = new Centroid(abMap);
-            centroid = calcNewCentroid(centroid, (ArrayList<User>) group.getMembers());
+            ArrayList<User> users = new ArrayList<>(group.getMembers());
+            centroid = calcNewCentroid(centroid, users);
             Double dist = distance(centroid.coords, user.getAbilities(course));
             if (dist < minDist) {
                 closestGroup = group;
