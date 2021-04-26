@@ -47,13 +47,14 @@ class FindCourse extends React.Component {
     handleJoinCourse = (courseID) => {
         const xhr = new XMLHttpRequest()
 
-        toast.success("Successfully sent the join request")
+        //toast.success("Successfully sent the join request")
 
         xhr.addEventListener('load', () => {
             const data = xhr.responseText;
+            const jsonResponse = JSON.parse(data)
             console.log("json response: ",data)
 
-            if (data["relatedUsers"].includes(username))
+            if (jsonResponse["relatedUsers"].includes(username))
               toast.success("Successfully joined the course")
             else
               toast.error("Failed to join the course, try again")

@@ -10,6 +10,7 @@ import Profile from "./components/Profile.jsx";
 import MyGroup from "./components/MyGroup.jsx";
 import FindGroup from "./components/FindGroup.jsx";
 import FindCourse from "./components/FindCourse.jsx";
+import CreateCourse from "./components/CreateCourse.jsx";
 
 import { SessionContext, getSessionCookie } from "./Cookies/Session.js";
 
@@ -28,6 +29,7 @@ function App() {
             <Route path="/group" exact component={() => <MyGroup />} />
             <Route path="/search" exact component={() => <FindGroup />} />
             <Route path="/searchCourse" exact component={() => <FindCourse />} />
+            <Route path="/createCourse" exact component={() => <CreateCourse />} />
           </Switch>
           <Footer />
         </Router>

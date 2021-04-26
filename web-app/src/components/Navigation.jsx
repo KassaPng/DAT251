@@ -23,6 +23,7 @@ function Navigation(props) {
           <Nav.Link href="/group">Group</Nav.Link>
           <Nav.Link href="/search">Find Group</Nav.Link>
           <Nav.Link href="/searchCourse">Find Course</Nav.Link>
+          <Nav.Link href="/createCourse">Create Course</Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
