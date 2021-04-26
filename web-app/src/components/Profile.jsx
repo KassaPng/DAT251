@@ -2,16 +2,17 @@ import React from "react";
 import { getSessionCookie } from "../Cookies/Session.js";
 import {Table, Form, InputGroup, FormControl} from "react-bootstrap";
 import Button from "react-bootstrap/Button";
-import {toast} from "react-toastify";
+import { ToastContainer, toast } from 'react-toastify';
+import RangeSlider from 'react-bootstrap-range-slider';
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      userAbilities : "",
+      userAbilities : {},
       courseSelection: ["Courses"],
       selectedCourse: "Course",
-      courses: "",
+      courses: ["Course"],
       abilityScoresUpdated :  {}
     }
   }
@@ -29,68 +30,16 @@ class Profile extends React.Component {
 
     xhr.addEventListener('load', () => {
       const data = xhr.responseText;
-      console.log("data: ", data)
       const jsonResponse = JSON.parse(data)
-      console.log("json response: ", jsonResponse)
 
       this.setState({
-        name: jsonResponse["name"],
-        userName: jsonResponse["userName"],
-        groups: jsonResponse["groups"],
-        // courses: jsonResponse["courses"]
-        courses: [
-          {
-            "id": 0,
-            "name": "course name",
-            "institutionName": "instutituion name",
-            "description": "description",
-            "abilities": [
-              "Ambition",
-              "Work-rate",
-              "Knowledge"
-            ],
-            "relatedGroups": [],
-            "relatedUsers": [
-              "asd@asd.asd"
-            ]
-          },
-          {
-            "id": 101,
-            "name": "asdasd",
-            "institutionName": "asdasdasd",
-            "description": "asdasd",
-            "abilities": [
-              "Ambition",
-              "Work-rate",
-              "Knowledge"
-            ],
-            "relatedGroups": [],
-            "relatedUsers": [
-              "asd@asd.asd"
-            ]
-          },
-          {
-            "id": 103,
-            "name": "asdasdasdasd",
-            "institutionName": "asdasdasdasdasdasd",
-            "description": "asdasdasdasd",
-            "abilities": [
-              "Ambition",
-              "Work-rate",
-              "Knowledge"
-            ],
-            "relatedGroups": [],
-            "relatedUsers": [
-              "asd@asd.asd"
-            ]
-          }
-        ]
+        courses: jsonResponse
       }, () => {
         this.updateSelections()
       });
 
     })
-    const URL = 'http://localhost:8080/users/' + getSessionCookie().email
+    const URL = 'http://localhost:8080/users/' + getSessionCookie().email + '/courses'
 
     xhr.open('GET', URL);
     xhr.send(URL);
@@ -98,58 +47,51 @@ class Profile extends React.Component {
 
   componentDidMount() {
     this.getUserData();
+    this.getUserAbilityValues();
   }
 
-  updateUserAbilityValue = () => {
+
+  getUserAbilityValues = () => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', () => {
+      const data = xhr.responseText;
+      const jsonResponse = JSON.parse(data)
+
+      this.setState({
+        userAbilities: jsonResponse.abilities
+      }, () => {this.renderAbilities()});
+
+    })
+    const URL = 'http://localhost:8080/users/' + getSessionCookie().email
+
+    xhr.open('GET', URL);
+    xhr.send(URL);
 
   }
 
-  updateAbilityValue = (value, abilityName) => {
-
-    const updatedAbilityMap = this.state.abilityScoresUpdated
-    updatedAbilityMap[abilityName] = value
-    this.setState({
-      abilityScoresUpdated : updatedAbilityMap
-    });
-
-  }
-
-  renderAbilitySlider = (abilityName) => {
-    return(
-        <Form>
-          <Form.Group controlId="formBasicRange">
-            <Form.Label>Range</Form.Label>
-            <Form.Control
-                type="range"
-                onChange={ e => (this.updateAbilityValue(e.target.value, abilityName))}
-            />
-          </Form.Group>
-        </Form>
-    );
-  }
 
   sendAbilityUpdates = () => {
     for (const [key, value] of Object.entries(this.state.abilityScoresUpdated)) {
       this.sendAbilityUpdate(key,value)
-      console.log(key, value);
     }
   }
 
   sendAbilityUpdate = (abilityName, abilityValue) => {
-    toast.success("Successfully sent the ability update request for ", abilityName)
+    const str = "Successfully sent the ability update request for " + abilityName
+    toast.success(str)
+
     const xhr = new XMLHttpRequest()
 
     xhr.addEventListener('load', () => {
+
       const data = xhr.responseText;
-      console.log("json response: ",data)
-      // TODO add different metrics to see if the request has been successful
-
-      // if (data.toLowerCase().includes("success"))
-      //   toast.success("Successfully updated the group")
-      // else
-      //   toast.error("Failed to update the group, try again")
-
-
+      const jsonResponse = JSON.parse(data)
+      this.setState({
+        userAbilities : jsonResponse.abilities
+      })
+      const str = "Successfully updated " +  abilityName
+      toast.success(str)
     })
 
     const URL = 'http://localhost:8080/users/' + getSessionCookie().email
@@ -173,7 +115,6 @@ class Profile extends React.Component {
         if (course.name === this.state.selectedCourse)
           return course.abilities
 
-
  }
 
   renderAbilities = () => {
@@ -184,7 +125,6 @@ class Profile extends React.Component {
             <tr>
               <th >Ability Score </th>
               <th>Ability name</th>
-
             </tr>
             </thead>
             <tbody>
@@ -192,10 +132,8 @@ class Profile extends React.Component {
               Object.entries(this.getCurrentCourseAbilities()).map(([key, ability]) => {
                   return(
                       <tr>
-
                         <td> {this.renderAbilitySlider(ability)}</td>
-                        <td>{ability}</td>
-
+                        <td >{ability}</td>
                       </tr>
                   );
               })
@@ -206,13 +144,101 @@ class Profile extends React.Component {
     }
   }
 
+  renderAbilitySlider = (abilityName) => {
+    return(
+        <Form>
+          <Form.Group controlId="formBasicRange">
+            <Form.Label></Form.Label>
+            <RangeSlider
+                min = "1"
+                max = "10"
+                step = {1}
+                type="range"
+                tooltipLabel={currentValue => `${currentValue}`}
+                tooltip='auto'
+                defaultValue = {() => {this.getSpecificUserAbility(abilityName)}}
+                value = {this.getAbilityValue(abilityName)}
+                onChange={ e => {this.updateAbilityValue(e.target.value, abilityName); } }
+            />
+          </Form.Group>
+        </Form>
+    );
+  }
 
+  getSpecificUserAbility = (abilityName) => {
+
+    if (this.state.userAbilities !== ""){
+      for (const course of this.state.courses){
+        if ( this.state.selectedCourse === course.name) {
+          for (const [key, value] of Object.entries(this.state.userAbilities)){
+            if (value['abilities'] !== undefined && parseInt(key) === parseInt(course.id)){
+              const scr = this.state.abilityScoresUpdated
+              scr[abilityName] = value['abilities'][abilityName]
+              this.setState({
+                abilityScoresUpdated : scr
+              });
+              return value['abilities'][abilityName]
+            }
+          }
+        }
+
+      }
+    }
+  }
+
+  updateAllAbilities = () => {
+    for (const [key,value] of Object.entries(this.getCurrentCourseAbilities())) {
+      this.updateSpecificUserAbility(value)
+    }
+
+
+  }
+  updateSpecificUserAbility = (abilityName) => {
+    if (this.state.userAbilities !== ""){
+      for (const course of this.state.courses){
+        if ( this.state.selectedCourse === course.name) {
+          for (const [key, value] of Object.entries(this.state.userAbilities)){
+            if (value['abilities'] !== undefined && parseInt(key) === parseInt(course.id)){
+              const scr = this.state.abilityScoresUpdated
+              scr[abilityName] = value['abilities'][abilityName]
+              this.setState({
+                abilityScoresUpdated : scr
+              });
+            }
+          }
+        }
+
+      }
+    }
+
+  }
+
+  updateAbilityValue = (value, abilityName) => {
+
+    const updatedAbilityMap = this.state.abilityScoresUpdated
+    updatedAbilityMap[abilityName] = value
+    this.setState({
+      abilityScoresUpdated : updatedAbilityMap
+    });
+
+  }
+
+  getAbilityValue = (abilityName) => {
+    if (this.state.abilityScoresUpdated !== undefined)
+      return this.state.abilityScoresUpdated[abilityName]
+
+  }
 
   setSelectedCourse = (courseName) => {
-    console.log("courseName: ", courseName)
     this.setState({
       selectedCourse: courseName
+    }, () => {
+      this.getCurrentCourseAbilities(courseName)
+      this.renderAbilities()
+      this.updateAllAbilities()
+
     });
+
   }
 
 
@@ -238,6 +264,9 @@ class Profile extends React.Component {
                     return <option>{value}</option>
                   })}
                 </Form.Control>
+
+              </InputGroup>
+              <div>
                 <Button
                     variant="primary"
                     size="sm"
@@ -246,13 +275,21 @@ class Profile extends React.Component {
                 >
                   Update abilities
                 </Button>{' '}
-              </InputGroup>
+                <Button
+                    variant="primary"
+                    size="sm"
+                >
+                  Find a group
+                </Button>{' '}
+              </div>
               <div>
                 {this.renderAbilities()}
               </div>
             </div>
           </div>
         </div>
+        <ToastContainer />
+
       </div>
     );
   }

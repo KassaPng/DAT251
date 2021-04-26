@@ -120,6 +120,8 @@ public class Controller {
         int score = Integer.parseInt(abilityScore);
         Course course = courseRepository.findByName(abilityGroupName);
         user.setAbilities(course, abilityName, score);
+        AbilityValues av = user.getAbilities().get(course.getId());
+        abilityValuesRepository.save(av);
         userRepository.save(user);
 
     }
