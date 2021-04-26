@@ -4,6 +4,7 @@ import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 import dat251.project.matching.AbilityValues;
+import dat251.project.matching.Kmeans;
 import dat251.project.repositories.AbilityValuesRepository;
 import dat251.project.repositories.CourseRepository;
 import dat251.project.repositories.GroupRepository;
@@ -286,6 +287,7 @@ public class Controller {
         }
     }
 
+
     @PutMapping("/groups/{groupID}/members")
     public @ResponseBody Group addUserToGroup(@PathVariable long groupID,
                                               @RequestBody Map<String, String> json) {
@@ -474,6 +476,28 @@ public class Controller {
             return null;
         }
         return user.getCourses();
+    }
+
+    @PutMapping("/matching/{courseName}/users/{userName}")
+    public @ResponseBody Group matchUserToGroup(@PathVariable String courseName,
+                                                        @PathVariable String userName) {
+        log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
+        Course course = courseRepository.findByName(courseName);
+        User user = userRepository.findByUserName(userName);
+        Kmeans kmeans = new Kmeans(course);
+        try {
+            Group group = kmeans.findClosestGroup(user);
+            group.addUserToGroup(user);
+            groupRepository.save(group);
+            user.addGroupToUsersListOfGroups(group);
+            userRepository.save(user);
+            log.info("Successfully matched user to a group");
+            return group;
+        } catch (NullPointerException e) {
+            log.info("Failed to match user to a group");
+            return null;
+        }
+
     }
 
     @PutMapping("/courses/{courseID}/groups/{groupID}")
