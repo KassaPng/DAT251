@@ -498,6 +498,7 @@ public class Controller {
             Group group = kmeans.findClosestGroup(user);
             group.addUserToGroup(user);
             groupRepository.save(group);
+            user.addCourseToUsersListOfCourses(course);
             user.addGroupToUsersListOfGroups(group);
             userRepository.save(user);
             log.info("Successfully matched user to a group");
