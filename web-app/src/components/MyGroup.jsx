@@ -1,6 +1,6 @@
 import React from "react";
 import Button from "react-bootstrap/Button";
-import {Modal, Table} from "react-bootstrap";
+import {InputGroup, Modal, Table} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import { ToastContainer, toast } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
@@ -16,11 +16,41 @@ class MyGroup extends React.Component {
       showJoinGroup: false,
       showCreateCourse: false,
       showEditGroup: null,
+      courseSelection: ["Courses"],
       groups: [""]
     }
   }
   componentDidMount() {
     this.getGroups();
+    this.getCourses();
+  }
+
+  updateSelections = () => {
+    for (const course of this.state.courses)
+      if (!this.state.courseSelection.includes((course.name)))
+        this.setState(prevState => ({
+          courseSelection: [...prevState.courseSelection, course.name]
+        }))
+  }
+
+  getCourses = () => {
+    const xhr = new XMLHttpRequest();
+
+    xhr.addEventListener('load', () => {
+      const data = xhr.responseText;
+      const jsonResponse = JSON.parse(data)
+
+      this.setState({
+        courses: jsonResponse
+      }, () => {
+        this.updateSelections()
+      });
+
+    })
+    const URL = 'http://localhost:8080/users/' + getSessionCookie().email + '/courses'
+
+    xhr.open('GET', URL);
+    xhr.send(URL);
   }
 
   getGroups = () => {
@@ -138,6 +168,7 @@ class MyGroup extends React.Component {
     toast.success("Successfully sent the group creation request")
     const xhr = new XMLHttpRequest()
 
+
     xhr.addEventListener('load', () => {
       const data = xhr.responseText;
       console.log("json response: ",data)
@@ -156,6 +187,7 @@ class MyGroup extends React.Component {
       "groupName": this.state.groupToCreateName,
       "description": this.state.groupToCreateDescription,
       "creatorName": getSessionCookie().email,
+      "courseName":  this.state.selectedCourse,
 
     })
     xhr.send(jsonString)
@@ -242,19 +274,30 @@ class MyGroup extends React.Component {
         <Form >
           <Form.Group controlId="formBasicEmail">
             <Form.Label>Group Name</Form.Label>
+
             <Form.Control
                 onChange={(e) => {this.setGroupToCreateName(e.target.value)}}
             />
           </Form.Group>
-          <Form.Group controlId="exampleForm.ControlTextarea1">
-            <Form.Label>Description</Form.Label>
-            <Form.Control
-                as="textarea" rows={3}
-                onChange={(e) => {this.setGroupToCreateDescription(e.target.value)}}
-            />
-          </Form.Group>
+          <Form.Control
+              as="select"
+              onChange={(e) => {
+                this.setSelectedCourse(e.target.value)
+              }}
+          >
+            {this.state.courseSelection.map((value, index) => {
+              return <option>{value}</option>
+            })}
+          </Form.Control>
         </Form>
     );
+
+  }
+
+  setSelectedCourse = (courseName) => {
+    this.setState({
+      selectedCourse: courseName
+    });
 
   }
 

@@ -4,6 +4,7 @@ import dat251.project.entities.Course;
 import dat251.project.entities.Group;
 import dat251.project.entities.User;
 import dat251.project.matching.AbilityValues;
+import dat251.project.matching.Kmeans;
 import dat251.project.repositories.AbilityValuesRepository;
 import dat251.project.repositories.CourseRepository;
 import dat251.project.repositories.GroupRepository;
@@ -187,18 +188,27 @@ public class Controller {
         log.info("Attempting to create a new Group");
         // Concatenating request parameters with an empty
         // string to prevent null values.
+        String courseName = "" + json.get("courseName");
         String groupName = "" + json.get("groupName");
         String creatorName = "" +json.get("creatorName"); // adds the group creator to the group by default,
+
         User creator = userRepository.findByUserName(creatorName); // reducing the amount of HTTP requests needed.
         if (notExistsInDatabase(creator, USER)) {
             return "Failed to create new group.\nCreator did not exist";
         }
         if (groupName.length() >= 3) {
             Group group = new Group(groupName, standardGroupDescription);
+            Course course = courseRepository.findByName(courseName);
+
             group.addUserToGroup(creator);
             creator.addGroupToUsersListOfGroups(group);
+
+            course.addGroup(group);
+            group.addReferenceToCourse(course);
+
             groupRepository.save(group);
             userRepository.save(creator);
+            courseRepository.save(course);
             log.info("Successfully created group: {} with ID: {}", group.getGroupName(), group.getId());
             return "Successfully created group: " + group;
         } else {
@@ -285,6 +295,7 @@ public class Controller {
             courseRepository.save(course);
         }
     }
+
 
     @PutMapping("/groups/{groupID}/members")
     public @ResponseBody Group addUserToGroup(@PathVariable long groupID,
@@ -473,6 +484,28 @@ public class Controller {
             return null;
         }
         return user.getCourses();
+    }
+
+    @PutMapping("/matching/{courseName}/users/{userName}")
+    public @ResponseBody Group matchUserToGroup(@PathVariable String courseName,
+                                                        @PathVariable String userName) {
+        log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
+        Course course = courseRepository.findByName(courseName);
+        User user = userRepository.findByUserName(userName);
+        Kmeans kmeans = new Kmeans(course);
+        try {
+            Group group = kmeans.findClosestGroup(user);
+            group.addUserToGroup(user);
+            groupRepository.save(group);
+            user.addGroupToUsersListOfGroups(group);
+            userRepository.save(user);
+            log.info("Successfully matched user to a group");
+            return group;
+        } catch (NullPointerException e) {
+            log.info("Failed to match user to a group");
+            return null;
+        }
+
     }
 
     @PutMapping("/courses/{courseID}/groups/{groupID}")
