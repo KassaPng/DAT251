@@ -7,7 +7,7 @@ import Nav from 'react-bootstrap/Nav'
 
 function loggedIn() {
     if (getSessionCookie().email !== "unauthorized")
-        return getSessionCookie().email
+        return getSessionCookie().email.split(".").pop()
     else
         return ""
 }
