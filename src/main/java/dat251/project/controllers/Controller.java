@@ -74,6 +74,30 @@ public class Controller {
         return userRepository.findAll();
     }
 
+    @GetMapping("/users/{userName}/courses/{courseName}")
+    public @ResponseBody Boolean getUserCourseGroupStatus(@PathVariable String userName,
+                                            @PathVariable String courseName) {
+        log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
+        Course course = courseRepository.findByName(courseName);
+        User user = userRepository.findByUserName(userName);
+        List<Group> userGroups = user.getGroups();
+        if (!userGroups.isEmpty()) {
+            for (Group group : userGroups) {
+                for (Course userGroupRelatedCourse : group.getCourses()) {
+                    if (userGroupRelatedCourse.getName().equals(courseName)) {
+                        log.info("User: {} does has  group in course: {}", userName, courseName);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        log.info("User: {} does not have a group in course: {}", userName, courseName);
+        return false;
+
+        }
+
+
     @GetMapping("/users/{userName}")
     public @ResponseBody
     User getUser(@PathVariable String userName) {
@@ -103,10 +127,6 @@ public class Controller {
         String abilityScore = "" + json.get("abilityScore");
         String abilityName = "" + json.get("abilityName");
         String abilityGroupName = "" + json.get("abilityGroupName");
-        System.out.println(abilityScore);
-        System.out.println(abilityName);
-        System.out.println(abilityGroupName);
-
 
         if (!abilityScore.equals(""))
             updateAbility(user, abilityName, abilityScore, abilityGroupName);
@@ -497,6 +517,7 @@ public class Controller {
             Group group = kmeans.findClosestGroup(user);
             group.addUserToGroup(user);
             groupRepository.save(group);
+            user.addCourseToUsersListOfCourses(course);
             user.addGroupToUsersListOfGroups(group);
             userRepository.save(user);
             log.info("Successfully matched user to a group");
