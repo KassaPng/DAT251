@@ -427,10 +427,10 @@ public class Controller {
         return courseRepository.findAll();
     }
 
-    @GetMapping("/courses/{courseID}")
-    public @ResponseBody Course getCourse(@PathVariable long courseID) {
-        log.info("Trying to find a specific course with id: {}", courseID);
-        Course course = courseRepository.findById(courseID);
+    @GetMapping("/courses/{courseName}")
+    public @ResponseBody Course getCourse(@PathVariable String courseName) {
+        log.info("Trying to find a specific course with id: {}", courseName);
+        Course course = courseRepository.findByName(courseName);
         if (notExistsInDatabase(course, COURSE)) {
             return null;
         } else {
@@ -438,7 +438,6 @@ public class Controller {
             return course;
         }
     }
-
     @DeleteMapping("/courses/{courseID}")
     public String deleteCourse(@PathVariable long courseID) {
         log.info("Attempting to delete course with ID: {}", courseID);
