@@ -5,6 +5,7 @@ import "../containers/Login.css";
 
 function Register(props) {
     const [email, setEmail] = useState("");
+    const [name, setName] = useState("");
     const [password, setPassword] = useState("");
     const [repeatPassword, setRepeatPassword] = useState("");
     const universities = useState(["UiB", "HVL", "UiO", "NTNU"]) // TODO: import this from a list
@@ -24,9 +25,9 @@ function Register(props) {
 
         const jsonString = JSON.stringify( {
             "userName": email,
+            "name": name,
             "password": password,
             "repeatPassword" : repeatPassword
-
         })
         xhr.send(jsonString)
     }
@@ -45,6 +46,14 @@ function Register(props) {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                    />
+                </Form.Group>
+                <Form.Group size="lg" controlId="name">
+                    <Form.Label>Name</Form.Label>
+                    <Form.Control
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
                     />
                 </Form.Group>
                 <Form.Group>
