@@ -539,7 +539,7 @@ public class Controller {
         ArrayList<User> userList = new ArrayList<>();
         for (Map.Entry<String, String> entry : json.entrySet()) {
             String groupName = entry.getValue();
-            if (groupName == "") {
+            if (groupName.equals("")) {
                 String userName = entry.getKey();
                 User user = userRepository.findByUserName(userName);
                 userList.add(user);
