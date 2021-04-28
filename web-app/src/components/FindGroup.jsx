@@ -101,7 +101,7 @@ class FindGroup extends React.Component {
                                         <td> <b> {group.id} </b></td>
                                         <td>{group.groupName}</td>
                                         <td>{group.description}</td>
-                                        <td>{group.members}</td>
+                                        <td>{group.members + "\n"}</td>
 
                                     </tr>
                                 );
@@ -119,8 +119,8 @@ class FindGroup extends React.Component {
         return (
             <div className="home">
                 <div className="container">
-                    <div className="row align-items-center my-5">
-                        <div className="col-lg-5">
+                    <div className="row align-items-center my-7">
+                        <div className="col-lg-7">
                             <h1 className="font-weight-light">Find Groups</h1>
                             <div>
                                 <Form.Group>

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 @RestController
 public class Controller {
@@ -75,7 +76,7 @@ public class Controller {
     }
 
     @GetMapping("/users/{userName}/courses/{courseName}")
-    public @ResponseBody Boolean getUserCourseGroupStatus(@PathVariable String userName,
+    public @ResponseBody String getUserCourseGroupStatus(@PathVariable String userName,
                                             @PathVariable String courseName) {
         log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
         Course course = courseRepository.findByName(courseName);
@@ -86,14 +87,14 @@ public class Controller {
                 for (Course userGroupRelatedCourse : group.getCourses()) {
                     if (userGroupRelatedCourse.getName().equals(courseName)) {
                         log.info("User: {} does has  group in course: {}", userName, courseName);
-                        return true;
+                        return group.getGroupName();
                     }
                 }
             }
         }
 
         log.info("User: {} does not have a group in course: {}", userName, courseName);
-        return false;
+        return "";
 
         }
 
@@ -527,6 +528,45 @@ public class Controller {
             return null;
         }
 
+    }
+
+    @PutMapping("/matching/{courseName}/user/{clusters}")
+    public @ResponseBody Boolean matchUsersToGroup(@PathVariable String courseName,
+                                                 @PathVariable int clusters,
+                                                 @RequestBody Map<String, String> json) {
+        //log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
+        Course course = courseRepository.findByName(courseName);
+        ArrayList<User> userList = new ArrayList<>();
+        for (Map.Entry<String, String> entry : json.entrySet()) {
+            String groupName = entry.getValue();
+            if (groupName == "") {
+                String userName = entry.getKey();
+                User user = userRepository.findByUserName(userName);
+                userList.add(user);
+            }
+        }
+
+        Kmeans kmeans = new Kmeans(course);
+        Map<Kmeans.Centroid, ArrayList<User>> centroids = kmeans.runKmeans(userList, clusters);
+
+        int i = 1;
+        for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
+            Group group = new Group("Group " + i, "");
+            group.addReferenceToCourse(course);
+            ArrayList<User> groupMembers = entry.getValue();
+            for (User user : groupMembers) {
+                group.addUserToGroup(user);
+                user.addGroupToUsersListOfGroups(group);
+                userRepository.save(user);
+            }
+            groupRepository.save(group);
+            course.addGroup(group);
+            courseRepository.save(course);
+            System.out.println("Group " + i + ": " + entry.getValue());
+            i++;
+        }
+
+        return true;
     }
 
     @PutMapping("/courses/{courseID}/groups/{groupID}")
