@@ -30,14 +30,6 @@ class CreateCourse extends React.Component {
                 }))
     }
 
-    updateMembers = () => {
-        for (const course of this.state.courses)
-            if (!this.state.courseSelection.includes((course.name)))
-                this.setState(prevState => ({
-                    courseSelection: [...prevState.courseSelection, course.name]
-                }))
-    }
-
     setSelectedCourse = (courseName) => {
         this.setState({
             selectedCourseName: courseName
@@ -52,6 +44,13 @@ class CreateCourse extends React.Component {
         Object.entries(this.state.members).map(([key, member]) => {
             this.getCourseParticipantGroupStatus(member)
         })
+    }
+
+    setNumberOfGroups = (n) => {
+      console.log("Number of groups is now:" + n)
+        this.setState({
+            numberOfGroups: n
+        });
     }
 
     setCourseToCreateName = (name) => {
@@ -82,6 +81,18 @@ class CreateCourse extends React.Component {
     handleCreateCourseShow = () => {
         this.setState({
             showCreateCourse: true
+        });
+    }
+
+    handleGroupMatchShow = () => {
+        this.setState({
+            showGroupMatch: true
+        });
+    }
+
+    handleGroupMatchClose = () => {
+        this.setState({
+            showGroupMatch: false
         });
     }
 
@@ -148,6 +159,38 @@ class CreateCourse extends React.Component {
         this.handleCreateCourseClose()
     }
 
+    sendGroupMatchRequest = () => {
+        //toast.success("Successfully sent the course creation request")
+        const xhr = new XMLHttpRequest()
+
+        xhr.open('PUT', 'http://localhost:8080/matching/' + this.state.selectedCourseName + '/user/' + this.state.numberOfGroups)
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.addEventListener('load', () => {
+            const data = xhr.responseText;
+            console.log(data)
+            if (data.toLowerCase().includes("true"))
+                toast.success("Successfully matches students")
+            else
+                toast.error("Failed to match students, try again")
+        })
+
+
+        const jsonString = JSON.stringify(this.state.memberToGroupStatusMap)
+        /*
+        const jsonString = JSON.stringify({
+            "courseName": this.state.courseToCreateName,
+            "institution": this.state.courseToCreateInstitutionName,
+            "description": this.state.courseToCreateDescription,
+
+        })
+        */
+        console.log("JSON: " + jsonString)
+        xhr.send(jsonString)
+        this.getUserCourses()
+        this.handleGroupMatchClose()
+    }
+
+
     createCourseCreatePopup = () => {
         return (
             <>
@@ -160,7 +203,7 @@ class CreateCourse extends React.Component {
                     keyboard={false}
                 >
                     <Modal.Header closeButton>
-                        <Modal.Title>Create group</Modal.Title>
+                        <Modal.Title>Create Course</Modal.Title>
                     </Modal.Header>
                     <Modal.Body>
                         {this.createCourseCreateForm()}
@@ -207,21 +250,51 @@ class CreateCourse extends React.Component {
         );
     }
 
+    createGroupMatchPopup = () => {
+        return (
+            <>
+                <Modal
+                    show={this.state.showGroupMatch}
+                    onHide={e => {
+                        this.handleGroupMatchClose()
+                    }}
+                    backdrop="static"
+                    keyboard={false}
+                >
+                    <Modal.Header closeButton>
+                        <Modal.Title>Match Groups</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group controlId="formNumberInput">
+                                <Form.Label>Number of Groups</Form.Label>
+                                <Form.Control
+                                    onChange={(e) => {
+                                        this.setNumberOfGroups(e.target.value)
+                                    }}
+                                />
+                            </Form.Group>
+                        </Form>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button variant="primary" onClick={e => {
+                            this.sendGroupMatchRequest()
+                            this.renderMembers()
+                        }}>Match Groups</Button>
+                    </Modal.Footer>
+                </Modal>
+            </>
+        );
+    }
+
     renderMembers = () => {
-        if (!this.state.isDataFetched){
-            return (
-                <Spinner animation="border" role="status">
-                    <span className="sr-only">Loading...</span>
-                </Spinner>
-            )
-        }
         if (this.state.selectedCourseName !== "Courses") {
             return (
                 <Table responsive="xl">
                     <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Has group in this course</th>
+                        <th>Grup Name</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -251,6 +324,7 @@ class CreateCourse extends React.Component {
             this.setState({
                 memberToGroupStatusMap: map
             })
+            console.log(map)
 
             if (Object.keys(this.state.members).length === Object.keys(this.state.memberToGroupStatusMap).length)
                 this.setState({
@@ -284,7 +358,19 @@ class CreateCourse extends React.Component {
                                     + New Course
                                 </Button>{' '}
                                 {this.createCourseCreatePopup()}
-                                <br/>
+                                <Button
+                                    variant="primary"
+                                    size="sm"
+                                    onClick={e => {
+                                        this.handleGroupMatchShow()
+                                    }} // send HTTP request here
+                                >
+                                    + Match Groups
+                                </Button>{' '}
+                                {this.createGroupMatchPopup()}
+                            </div>
+                            <br/>
+                            <div>
                                 <InputGroup className="mb-3">
                                     <Form.Control
                                         as="select"

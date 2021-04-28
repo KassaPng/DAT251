@@ -531,7 +531,7 @@ class MyGroup extends React.Component {
               <td onMouseDown= {() => {this.handleEditGroupShow(group.id)} }>{<b style={{ color: 'RoyalBlue' }}>{group.id}</b>}</td>
               <td>{group.groupName}</td>
               <td>{group.description}</td>
-              <td>{group.members}</td>
+              <td>{group.members}{" "}</td>
             </tr>
             )
 

@@ -29,7 +29,7 @@ public class Course {
     private List<String> listOfAbilities;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     private List<Group> relatedGroups;
 
     @JsonIgnore
