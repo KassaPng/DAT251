@@ -49,7 +49,7 @@ public class AbilityValues {
 
     public void setAbilities(String abilityName, int value) throws IllegalArgumentException {
         if(value < 0 || value > 10) {
-            throw new IllegalArgumentException("Val must be between 0 and 10");
+            throw new IllegalArgumentException("Value must be between 0 and 10");
         }
         abilities.put(abilityName, (double) value);
     }
