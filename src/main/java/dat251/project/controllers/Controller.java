@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
 
 @RestController
 public class Controller {
@@ -74,6 +75,30 @@ public class Controller {
         return userRepository.findAll();
     }
 
+    @GetMapping("/users/{userName}/courses/{courseName}")
+    public @ResponseBody String getUserCourseGroupStatus(@PathVariable String userName,
+                                            @PathVariable String courseName) {
+        log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
+        Course course = courseRepository.findByName(courseName);
+        User user = userRepository.findByUserName(userName);
+        List<Group> userGroups = user.getGroups();
+        if (!userGroups.isEmpty()) {
+            for (Group group : userGroups) {
+                for (Course userGroupRelatedCourse : group.getCourses()) {
+                    if (userGroupRelatedCourse.getName().equals(courseName)) {
+                        log.info("User: {} does has  group in course: {}", userName, courseName);
+                        return group.getGroupName();
+                    }
+                }
+            }
+        }
+
+        log.info("User: {} does not have a group in course: {}", userName, courseName);
+        return "";
+
+        }
+
+
     @GetMapping("/users/{userName}")
     public @ResponseBody
     User getUser(@PathVariable String userName) {
@@ -103,10 +128,6 @@ public class Controller {
         String abilityScore = "" + json.get("abilityScore");
         String abilityName = "" + json.get("abilityName");
         String abilityGroupName = "" + json.get("abilityGroupName");
-        System.out.println(abilityScore);
-        System.out.println(abilityName);
-        System.out.println(abilityGroupName);
-
 
         if (!abilityScore.equals(""))
             updateAbility(user, abilityName, abilityScore, abilityGroupName);
@@ -438,10 +459,10 @@ public class Controller {
         return courseRepository.findAll();
     }
 
-    @GetMapping("/courses/{courseID}")
-    public @ResponseBody Course getCourse(@PathVariable long courseID) {
-        log.info("Trying to find a specific course with id: {}", courseID);
-        Course course = courseRepository.findById(courseID);
+    @GetMapping("/courses/{courseName}")
+    public @ResponseBody Course getCourse(@PathVariable String courseName) {
+        log.info("Trying to find a specific course with id: {}", courseName);
+        Course course = courseRepository.findByName(courseName);
         if (notExistsInDatabase(course, COURSE)) {
             return null;
         } else {
@@ -449,7 +470,6 @@ public class Controller {
             return course;
         }
     }
-
     @DeleteMapping("/courses/{courseID}")
     public String deleteCourse(@PathVariable long courseID) {
         log.info("Attempting to delete course with ID: {}", courseID);
@@ -498,6 +518,7 @@ public class Controller {
             Group group = kmeans.findClosestGroup(user);
             group.addUserToGroup(user);
             groupRepository.save(group);
+            user.addCourseToUsersListOfCourses(course);
             user.addGroupToUsersListOfGroups(group);
             userRepository.save(user);
             log.info("Successfully matched user to a group");
@@ -507,6 +528,45 @@ public class Controller {
             return null;
         }
 
+    }
+
+    @PutMapping("/matching/{courseName}/user/{clusters}")
+    public @ResponseBody Boolean matchUsersToGroup(@PathVariable String courseName,
+                                                 @PathVariable int clusters,
+                                                 @RequestBody Map<String, String> json) {
+        //log.info("Attempting to match a user: {} to a group in course: {}", userName, courseName);
+        Course course = courseRepository.findByName(courseName);
+        ArrayList<User> userList = new ArrayList<>();
+        for (Map.Entry<String, String> entry : json.entrySet()) {
+            String groupName = entry.getValue();
+            if (groupName.equals("")) {
+                String userName = entry.getKey();
+                User user = userRepository.findByUserName(userName);
+                userList.add(user);
+            }
+        }
+
+        Kmeans kmeans = new Kmeans(course);
+        Map<Kmeans.Centroid, ArrayList<User>> centroids = kmeans.runKmeans(userList, clusters);
+
+        int i = 1;
+        for (Map.Entry<Kmeans.Centroid, ArrayList<User>> entry : centroids.entrySet()) {
+            Group group = new Group("Group " + i, "");
+            group.addReferenceToCourse(course);
+            ArrayList<User> groupMembers = entry.getValue();
+            for (User user : groupMembers) {
+                group.addUserToGroup(user);
+                user.addGroupToUsersListOfGroups(group);
+                userRepository.save(user);
+            }
+            groupRepository.save(group);
+            course.addGroup(group);
+            courseRepository.save(course);
+            System.out.println("Group " + i + ": " + entry.getValue());
+            i++;
+        }
+
+        return true;
     }
 
     @PutMapping("/courses/{courseID}/groups/{groupID}")

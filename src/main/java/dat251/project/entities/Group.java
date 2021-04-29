@@ -25,7 +25,7 @@ public class Group {
     private List<String> listOfAbilities;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     private List<User> members;
 
     @JsonIgnore

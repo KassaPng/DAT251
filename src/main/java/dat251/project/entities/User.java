@@ -27,7 +27,7 @@ public class User {
     private String passwordAsHash;
 
     @JsonIgnore
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.ALL})
     private List<Group> groups;
 
     @JsonIgnore

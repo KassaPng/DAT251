@@ -126,6 +126,7 @@ class FindCourse extends React.Component {
                                 </Form.Group>
                             </div>
                             {this.renderCourses()}
+                            <br/>
                         </div>
                     </div>
                     <ToastContainer />
